@@ -1,5 +1,7 @@
 /* outa[bot] // app.js
 	Copyright (c) 2012-2013 outa[dev].
+	
+   Modified by YoruNoHikage (with outadoc's agreement)
 */
 
 (function() {
