@@ -48,9 +48,24 @@
 					LogUtils.logtrace("[" + data.id_str + "] tweet from [" + data.user.screen_name + "]", LogUtils.Colors.GREEN);
 					
 					var today = new Date();
-					var tweetDone = '@' + data.user.screen_name + " Vive les patates volantes. En voilà une qui s'envole, il est " + today.getHours() + "h" + today.getMinutes() + " !";
+					var rand = parseInt(Math.random() * (3 - 0) + 0);
+					var result = "";
+					switch(rand) {
+						case 2:
+							result = "Patate volante un jour, patate volante toujours !";
+							break;
+						case 1:
+							result = "Les patates volantes sont nos amies.";
+							break;
+						case 0:
+							result = "Vive les patates volantes.";
+							break;
+						default:
+							result = "Carotte Volante ! Qu'est-ce que je raconte moi ?";
+							break;
+					}
 					
-					///@todo: Random messages to avoid duplicate status
+					var tweetDone = '@' + data.user.screen_name + " " + result + " En voilà une qui s'envole, il est " + (today.getHours() +1) % 24 + "h" + today.getMinutes() + " !";
 					
 					//reply to the tweet that mentionned us
 					twitterAPI.updateStatus(tweetDone.substring(0, 139), { in_reply_to_status_id: data.id_str },
@@ -103,6 +118,9 @@
 						}
 					);
 				}
+			} else {
+				LogUtils.logtrace("data.text is not defined", LogUtils.Colors.RED);
+				console.log("Data: %j", data);
 			}
 		});
 		
