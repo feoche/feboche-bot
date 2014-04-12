@@ -35,6 +35,32 @@
 		}
 	});
 	
+	function errorTwitter(error, statusData) {
+		LogUtils.logtrace(error, LogUtils.Colors.RED);
+
+		if(error.statusCode == 403 && !hasNotifiedTL) {
+			//if we're in tweet limit, we will want to indicate that in the name of the bot
+			//so, if we aren't sure we notified the users yet, get the current twitter profile of the bot
+			twitterAPI.showUser(botUsername, function(error, data) {
+				if(!error) {
+					if(data[0].name.match(/(\[TL\]) (.*)/)) {
+						//if we already changed the name but couldn't remember it (maybe it was during the previous session)
+						hasNotifiedTL = true;
+					} else {
+						//if the name of the bot hasn't already been changed, do it: we add "[TL]" just before its normal name
+						twitterAPI.updateProfile({name: '[TL] ' + data[0].name}, function(error, data) {
+							if(error) {
+								LogUtils.logtrace("error while trying to change username (going IN TL)", LogUtils.Colors.RED);
+							} else {
+								LogUtils.logtrace("gone IN tweet limit", LogUtils.Colors.RED);
+							}
+						});
+					}
+				}
+			})
+		}
+	}
+	
 	function streamCallback(stream) {
 		LogUtils.logtrace("streaming", LogUtils.Colors.CYAN);
 		
@@ -46,8 +72,38 @@
 				if(data.user.screen_name.toLowerCase() != botUsername.toLowerCase() 			//if it wasn't sent by the bot itself
 					&& config.blacklist.indexOf(data.user.screen_name) == -1 					//if the sender isn't in the blacklist
 					&& data.retweeted_status === undefined) {									//and if it isn't a retweet of one of our tweets
-
+					
 					LogUtils.logtrace("[" + data.id_str + "] tweet from [" + data.user.screen_name + "]", LogUtils.Colors.GREEN);
+					
+					// retweet
+					LogUtils.logtrace("Trying to retweet [" + data.id + "]", LogUtils.Colors.CYAN);
+					twitterAPI.retweetStatus(data.id_str, 
+						function(error, statusData) {
+							//when we got a response from twitter, check for an error (which can occur pretty frequently)
+							if(error) {
+								errorTwitter(error, statusData);
+							} else {
+								//if we could send the tweet just fine
+								LogUtils.logtrace("[" + statusData.retweeted_status.id_str + "] ->retweeted from [" + statusData.retweeted_status.user.screen_name + "]", LogUtils.Colors.GREEN);
+								
+								//check if there's "[TL]" in the name of the but
+								var tweetLimitCheck = statusData.user.name.match(/(\[TL\]) (.*)/);	
+
+								//if we just got out of tweet limit, we need to update the bot's name
+								if(tweetLimitCheck != null) {
+									//DO EET
+									twitterAPI.updateProfile({name: tweetLimitCheck[2]}, function(error, data) {
+										if(error) {
+											LogUtils.logtrace("error while trying to change username (going OUT of TL)", LogUtils.Colors.RED);
+										} else {
+											hasNotifiedTL = true;
+											LogUtils.logtrace("gone OUT of tweet limit", LogUtils.Colors.RED);
+										}
+									});
+								}
+							}
+						}
+					);
 					
 					var today = new Date();
 					var rand = parseInt(Math.random() * (3 - 0) + 0);
@@ -67,36 +123,14 @@
 							break;
 					}
 					
-					var tweetDone = '@' + data.user.screen_name + " " + result + " En voilà une qui s'envole, il est " + (today.getHours() +1) % 24 + "h" + today.getMinutes() + " !";
+					var tweetDone = '@' + data.user.screen_name + " " + result + " En voilà une qui s'envole, il est " + (today.getHours()) % 24 + "h" + today.getMinutes() + " !";
 					
 					//reply to the tweet that mentionned us
-					twitterAPI.updateStatus(tweetDone.substring(0, 139), { in_reply_to_status_id: data.id_str },
+					twitterAPI.updateStatus(tweetDone.substring(0, 139), { in_reply_to_status_id: data.id_str }, 
 						function(error, statusData) {
 							//when we got a response from twitter, check for an error (which can occur pretty frequently)
 							if(error) {
-								LogUtils.logtrace(error, LogUtils.Colors.RED);
-
-								if(error.statusCode == 403 && !hasNotifiedTL) {
-									//if we're in tweet limit, we will want to indicate that in the name of the bot
-									//so, if we aren't sure we notified the users yet, get the current twitter profile of the bot
-									twitterAPI.showUser(botUsername, function(error, data) {
-										if(!error) {
-											if(data[0].name.match(/(\[TL\]) (.*)/)) {
-												//if we already changed the name but couldn't remember it (maybe it was during the previous session)
-												hasNotifiedTL = true;
-											} else {
-												//if the name of the bot hasn't already been changed, do it: we add "[TL]" just before its normal name
-												twitterAPI.updateProfile({name: '[TL] ' + data[0].name}, function(error, data) {
-													if(error) {
-														LogUtils.logtrace("error while trying to change username (going IN TL)", LogUtils.Colors.RED);
-													} else {
-														LogUtils.logtrace("gone IN tweet limit", LogUtils.Colors.RED);
-													}
-												});
-											}
-										}
-									})
-								}
+								errorTwitter(error, statusData);
 							} else {
 								//if we could send the tweet just fine
 								LogUtils.logtrace("[" + statusData.in_reply_to_status_id_str + "] ->replied to [" + statusData.in_reply_to_screen_name + "]", LogUtils.Colors.GREEN);
