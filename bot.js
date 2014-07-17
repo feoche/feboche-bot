@@ -105,25 +105,70 @@
 						}
 					);
 					
-					var today = new Date();
-					var rand = parseInt(Math.random() * (3 - 0) + 0);
-					var result = "";
-					switch(rand) {
-						case 2:
-							result = "Patate volante un jour, patate volante toujours !";
-							break;
-						case 1:
-							result = "Les patates volantes sont nos amies.";
-							break;
-						case 0:
-							result = "Vive les patates volantes.";
-							break;
-						default:
-							result = "Carotte Volante ! Qu'est-ce que je raconte moi ?";
-							break;
+					var result = '';
+
+					if(data.text.indexOf('patate volante') != -1 ||
+					data.text.indexOf('patate ailée') != -1 ||
+					data.text.indexOf('patate avion') != -1 ||
+					data.text.indexOf('patate fusée') != -1 ||
+					data.text.indexOf('tubercule volant') != -1 ||
+					data.text.indexOf('tubercule volant') != -1 ||
+					data.text.indexOf('pomme de terre volante') != -1)
+					{
+							var rand = parseInt(Math.random() * (4 - 0) + 0);
+							switch(rand) {
+								case 3 :
+									result = 'Patate volante oui c\'est moi ! La seule l\'unique !';
+									break;
+								case 2:
+									result = "Patate volante un jour, patate volante toujours !";
+									break;
+								case 1:
+									result = "Les patates volantes sont nos amies.";
+									break;
+								case 0:
+									result = "Vive les patates volantes.";
+									break;
+								default:
+									result = 'Take your stinking paws off me, you damn dirty human ! ';
+									break;
+							}
 					}
+
+					else if(data.text.indexOf('frite volante') != -1 ||
+						data.text.indexOf('chips volante') != -1)
+						data.text.indexOf('vodka volante') != -1)
+						result = 'Le tout à base de patate volante bien sûr !!!';
+
+					else if(data.text.indexOf('gratin dauphinois') != -1)
+						result = 'Noooon ! Pas en gratin !';
+
+					else if(data.text.indexOf('patates sautées') != -1)
+						result = 'Les patates volantes sautées ne retombe pas dans la poêle !';
+
+					else if(data.text.indexOf('pomme de terre rôtie') != -1)
+						result = 'N\'essayez pas de nous rôtire, les patates volantes sont des dures à cuire.';
+
+					else if(data.text.indexOf('patate farcie') != -1 ||
+					data.text.indexOf('patates farcies') != -1)
+						result = 'Éventrer des patates est interdit pas la convention de genève.';
+
+					else if(data.text.indexOf('pomme de terre rôtie') != -1)
+						result = 'N\'essayez pas de nous rôtire, les patates volantes sont des dures à cuire.';
+
+					else if(data.text.indexOf(' CIPT ') != -1)
+						result = 'Ici c\'est hachis http://tinyurl.com/o9a2ly7 #CIPT';
+
+					else if(data.text.indexOf('axomama') != -1)
+						result = 'Que la force de la toute puissante patate soit avec toi ! http://tinyurl.com/oa5jktv';
+
+					else if(data.text.indexOf('pomme de terre en fête') != -1)
+						result = 'La vie c\'est la fête ! http://www.belledulie.fr/';
+
+					else
+						result = 'Les patates volantes sont nos amies !'
 					
-					var tweetDone = '@' + data.user.screen_name + " " + result + " En voilà une qui s'envole, il est " + (today.getHours()) % 24 + "h" + today.getMinutes() + " !";
+					var tweetDone = '@' + data.user.screen_name + " " + result;
 					
 					//reply to the tweet that mentionned us
 					twitterAPI.updateStatus(tweetDone.substring(0, 139), { in_reply_to_status_id: data.id_str }, 
@@ -177,7 +222,28 @@
 
 	function initStreaming() {
 		//initialize the stream and everything else
-		twitterAPI.stream('statuses/filter', {track: 'patate volante'}, streamCallback);
+
+		var keyWords = [
+			'patate volante',
+			'patate ailée',
+			'patate avion',
+			'patate fusée',
+			'pomme de terre volante',
+			'frite volante',
+			'chips volante',
+			'gratin dauphinois',
+			'pomme de terre rôtie',
+			'patate farcie',
+			'patate sautées',
+			'tubercule volant',
+			'solamacée',
+			'CIPT',
+			'axomania',
+			'vodka volante',
+			'pomme de terre en fête'
+		];
+
+		twitterAPI.stream('statuses/filter', {track: keyWords.join(', ')}, streamCallback);
 	}
 
 })();
