@@ -15,10 +15,13 @@ Setup in config.json. Replace the Twitter API keys of the bot you created on Twi
 		"access_token_secret": "YOUR_ACCESS_TOKEN_SECRET"
 	},
 	"blacklist": ["HeureFrancaise"]
+	"word_blacklist": ["Justin", "Bieber", "#Belieber"]
 }
 ```
 
 As you can see, you can also specify a blacklist which will prevent the bot from replying to certain users: this can be particularly useful if you don't want the bot to be stuck in a loop with another bot.
+You can blacklist words too, it can be useful when some people might think this is funny to RT thousands of the same tweet, just to gain vote in some
+ridiculous contest (I'm not saying #MTVHottest :-°)
 
 #Usage
 Install Node.js, and use it to run the bot. Like this:

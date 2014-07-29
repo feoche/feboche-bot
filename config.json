@@ -5,5 +5,10 @@
 		"access_token_key":    "YOUR_ACCESS_TOKEN_KEY",
 		"access_token_secret": "YOUR_ACCESS_TOKEN_SECRET"
 	},
-	"blacklist": []
+	"blacklist": [],
+    "word_blacklist": [
+        "MTVHottest",
+        "BestFandom2014", 
+        "Jean Michel"
+    ]
 }

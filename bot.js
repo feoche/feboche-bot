@@ -76,6 +76,14 @@
                 if(data.user.screen_name.toLowerCase() != botUsername.toLowerCase() && 			//if it wasn't sent by the bot itself
                    config.blacklist.indexOf(data.user.screen_name) == -1 &&					//if the sender isn't in the blacklist
                    data.retweeted_status === undefined) {									//and if it isn't a retweet of one of our tweets
+                    
+                    var h = config.word_blacklist;
+                    for(var i = 0 ; i < h.length ; i++) {
+                        if(data.text.toLowerCase().contains(h[i].toLowerCase())) {
+                            LogUtils.logtrace("A blacklist word avoided", LogUtils.Colors.RED);
+                            return false;
+                        }
+                    }
 
                     LogUtils.logtrace("[" + data.id_str + "] tweet from [" + data.user.screen_name + "]", LogUtils.Colors.GREEN);
 
