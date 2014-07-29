@@ -145,9 +145,6 @@
                     else if(text.contains('frite volante') || text.contains('chips volante')) {
                         result = 'Le tout à base de patate volante, bien sûr !!!';
                     }
-                    else if(text.contains('gratin dauphinois')) {
-                        result = 'Noooon ! Pas en gratin !';
-                    } 
                     else if(text.contains('patate sautée') || text.contains('patates sautées')) {
                         result = 'Les patates volantes sautées ne retombent pas dans la poêle !';
                     } 
@@ -236,7 +233,6 @@
             'pomme de terre volante',
             'frite volante',
             'chips volante',
-            'gratin dauphinois',
             'pomme de terre rôtie',
             'patate farcie',
             'patates farcies',
