@@ -6,9 +6,5 @@
 		"access_token_secret": "YOUR_ACCESS_TOKEN_SECRET"
 	},
 	"blacklist": [],
-    "word_blacklist": [
-        "MTVHottest",
-        "BestFandom2014", 
-        "Jean Michel"
-    ]
+    "word_blacklist": []
 }

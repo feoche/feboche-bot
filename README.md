@@ -14,7 +14,7 @@ Setup in config.json. Replace the Twitter API keys of the bot you created on Twi
 		"access_token_key":    "YOUR_ACCESS_TOKEN_KEY",
 		"access_token_secret": "YOUR_ACCESS_TOKEN_SECRET"
 	},
-	"blacklist": ["HeureFrancaise"]
+	"blacklist": ["HeureFrancaise"],
 	"word_blacklist": ["Justin", "Bieber", "#Belieber"]
 }
 ```
