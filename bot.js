@@ -12,8 +12,7 @@
         /digitale/,
         /digitales/
       ],
-      medium: [
-      ],
+      medium: [],
       hard: [
         /transformation\sdigitale/
       ]
@@ -166,67 +165,69 @@
 
           var text = data.text.toLowerCase();
 
-          if (PROHIBITEDWORDS.small.some(function (rx) {
-              return rx.test(text)
-            }) ||
-            PROHIBITEDWORDS.medium.some(function (rx) {
-              return rx.test(text)
-            }) ||
-            PROHIBITEDWORDS.hard.some(function (rx) {
-              return rx.test(text)
-            })) { // If tweet contains 'digital'
-
-            if (!EXCEPTIONS.some(function (rx) {
+          if (lngDetector.detect(text, 1)[0][0] === 'french') { // Only french tweets
+            if (PROHIBITEDWORDS.small.some(function (rx) {
                 return rx.test(text)
-              })) { // If tweet doesn't contain any of the excluded terms
+              }) ||
+              PROHIBITEDWORDS.medium.some(function (rx) {
+                return rx.test(text)
+              }) ||
+              PROHIBITEDWORDS.hard.some(function (rx) {
+                return rx.test(text)
+              })) { // If tweet contains 'digital'
 
-              if (PROHIBITEDWORDS.small.some(function (rx) {
+              if (!EXCEPTIONS.some(function (rx) {
                   return rx.test(text)
-                })) { // If the tweet severity is not that harmful
-                // Let's pick a random sentence to tweet
-                result = RESPONSES.small[Math.floor(Math.random() * RESPONSES.small.length)];
-              }
-              else if (PROHIBITEDWORDS.medium.some(function (rx) {
-                  return rx.test(text)
-                })) { // If they are brave enough to tweet that, 100% sure they'll get that
-                result = RESPONSES.small[Math.floor(Math.random() * RESPONSES.small.length)];
-              }
-              else { // They'll learn it the hard way
-                result = RESPONSES.hard[Math.floor(Math.random() * RESPONSES.hard.length)];
-              }
+                })) { // If tweet doesn't contain any of the excluded terms
 
-              var today = new Date();
-              var tweetDone = '@' + data.user.screen_name + " " + result + " " + (today.getHours()) % 24 + "h" + ('0' + today.getMinutes()).slice(-2);
-              LogUtils.logtrace(tweetDone, LogUtils.Colors.YELLOW);
+                if (PROHIBITEDWORDS.small.some(function (rx) {
+                    return rx.test(text)
+                  })) { // If the tweet severity is not that harmful
+                  // Let's pick a random sentence to tweet
+                  result = RESPONSES.small[Math.floor(Math.random() * RESPONSES.small.length)];
+                }
+                else if (PROHIBITEDWORDS.medium.some(function (rx) {
+                    return rx.test(text)
+                  })) { // If they are brave enough to tweet that, 100% sure they'll get that
+                  result = RESPONSES.small[Math.floor(Math.random() * RESPONSES.small.length)];
+                }
+                else { // They'll learn it the hard way
+                  result = RESPONSES.hard[Math.floor(Math.random() * RESPONSES.hard.length)];
+                }
 
-              //reply to the tweet that mentionned us
-              twitterAPI.updateStatus(tweetDone.substring(0, 139), {in_reply_to_status_id: data.id_str},
-                function (error, statusData) {
-                  //when we got a response from twitter, check for an error (which can occur pretty frequently)
-                  if (error) {
-                    errorTwitter(error, statusData);
-                  } else {
-                    //if we could send the tweet just fine
-                    LogUtils.logtrace("[" + statusData.in_reply_to_status_id_str + "] ->replied to [" + statusData.in_reply_to_screen_name + "]", LogUtils.Colors.GREEN);
+                var today = new Date();
+                var tweetDone = '@' + data.user.screen_name + " " + result + " " + (today.getHours()) % 24 + "h" + ('0' + today.getMinutes()).slice(-2);
+                LogUtils.logtrace(tweetDone, LogUtils.Colors.YELLOW);
 
-                    //check if there's "[TL]" in the name of the but
-                    var tweetLimitCheck = statusData.user.name.match(/(\[TL\]) (.*)/);
+                //reply to the tweet that mentionned us
+                twitterAPI.updateStatus(tweetDone.substring(0, 139), {in_reply_to_status_id: data.id_str},
+                  function (error, statusData) {
+                    //when we got a response from twitter, check for an error (which can occur pretty frequently)
+                    if (error) {
+                      errorTwitter(error, statusData);
+                    } else {
+                      //if we could send the tweet just fine
+                      LogUtils.logtrace("[" + statusData.in_reply_to_status_id_str + "] ->replied to [" + statusData.in_reply_to_screen_name + "]", LogUtils.Colors.GREEN);
 
-                    //if we just got out of tweet limit, we need to update the bot's name
-                    if (tweetLimitCheck != null) {
-                      //DO EET
-                      twitterAPI.updateProfile({name: tweetLimitCheck[2]}, function (error, data) {
-                        if (error) {
-                          LogUtils.logtrace("error while trying to change username (going OUT of TL)", LogUtils.Colors.RED);
-                        } else {
-                          hasNotifiedTL = true;
-                          LogUtils.logtrace("gone OUT of tweet limit", LogUtils.Colors.RED);
-                        }
-                      });
+                      //check if there's "[TL]" in the name of the but
+                      var tweetLimitCheck = statusData.user.name.match(/(\[TL\]) (.*)/);
+
+                      //if we just got out of tweet limit, we need to update the bot's name
+                      if (tweetLimitCheck != null) {
+                        //DO EET
+                        twitterAPI.updateProfile({name: tweetLimitCheck[2]}, function (error, data) {
+                          if (error) {
+                            LogUtils.logtrace("error while trying to change username (going OUT of TL)", LogUtils.Colors.RED);
+                          } else {
+                            hasNotifiedTL = true;
+                            LogUtils.logtrace("gone OUT of tweet limit", LogUtils.Colors.RED);
+                          }
+                        });
+                      }
                     }
                   }
-                }
-              );
+                );
+              }
             }
           }
         } else {
