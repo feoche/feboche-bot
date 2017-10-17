@@ -1,12 +1,51 @@
 /* outa[bot] // app.js
 	Copyright (c) 2012-2013 outa[dev].
 
-   Modified by YoruNoHikage (with outadoc's agreement)
+   Modified by feoche (with YoruNoHikage agreement)
 */
 
-(function() {
+(function () {
+
+    var prohibitedWords = {
+            small: [
+                'digital',
+                'digitale',
+                'digitales'
+            ],
+            medium: [],
+            hard: [
+                'transformation digitale'
+            ]
+        },
+
+        falsePositives = [
+            'affichage digital',
+            'photo digital',
+            'Digital Factory',
+            '@\w*digital'
+        ],
+
+        responses = {
+            small: [
+                'Vive le digital !',
+                'Le digital c\'est la vie.',
+                'Le digital est notre ami.',
+                'Digital un jour, digital toujours !',
+                'Tu l\'as dit, gital !',
+                'Que le force du digital soit avec toi !',
+                'Un certain doigté dans votre tweet !'
+            ],
+            medium: [],
+            hard: [
+                'https://www.odt.co.nz/sites/default/files/story/2016/04/all_black_first_five_dan_carter_kicks_a_drop_goal__4fe29fca4d.jpg',
+                'https://i.pinimg.com/originals/08/c5/89/08c58944534557324846d07c38707d7a.jpg',
+                'https://syafiqabdullahphotography.files.wordpress.com/2013/07/dsc_0149-copy.jpg'
+            ]
+        };
+
     //the twitter api module
     var ntwitter = require('ntwitter'),
+        lngDetector = new (require('languagedetect')),
         LogUtils = require('./lib/LogUtils.js'),
 
         //the username of the bot. not set to begin with, we'll get it when authenticating
@@ -20,7 +59,7 @@
         twitterAPI = new ntwitter(config.keys);
 
     //check if we have the rights to do anything
-    twitterAPI.verifyCredentials(function(error, userdata) {
+    twitterAPI.verifyCredentials(function (error, userdata) {
         if (error) {
             //if we don't, we'd better stop here anyway
             LogUtils.logtrace(error, LogUtils.Colors.RED);
@@ -38,18 +77,18 @@
     function errorTwitter(error, statusData) {
         LogUtils.logtrace(error, LogUtils.Colors.RED);
 
-        if(error.statusCode == 403 && !hasNotifiedTL) {
+        if (error.statusCode == 403 && !hasNotifiedTL) {
             //if we're in tweet limit, we will want to indicate that in the name of the bot
             //so, if we aren't sure we notified the users yet, get the current twitter profile of the bot
-            twitterAPI.showUser(botUsername, function(error, data) {
-                if(!error) {
-                    if(data[0].name.match(/(\[TL\]) (.*)/)) {
+            twitterAPI.showUser(botUsername, function (error, data) {
+                if (!error) {
+                    if (data[0].name.match(/(\[TL\]) (.*)/)) {
                         //if we already changed the name but couldn't remember it (maybe it was during the previous session)
                         hasNotifiedTL = true;
                     } else {
                         //if the name of the bot hasn't already been changed, do it: we add "[TL]" just before its normal name
-                        twitterAPI.updateProfile({name: '[TL] ' + data[0].name}, function(error, data) {
-                            if(error) {
+                        twitterAPI.updateProfile({name: '[TL] ' + data[0].name}, function (error, data) {
+                            if (error) {
                                 LogUtils.logtrace("error while trying to change username (going IN TL)", LogUtils.Colors.RED);
                             } else {
                                 LogUtils.logtrace("gone IN tweet limit", LogUtils.Colors.RED);
@@ -63,23 +102,23 @@
 
     function streamCallback(stream) {
         LogUtils.logtrace("streaming", LogUtils.Colors.CYAN);
-        
-        String.prototype.contains = function(word) {
+
+        String.prototype.contains = function (word) {
             return this.indexOf(word) != -1;
         };
 
-        stream.on('data', function(data) {
+        stream.on('data', function (data) {
             //if it's actually there
-            if(data.text !== undefined) {
+            if (data.text !== undefined) {
 
                 //a few checks to see if we should reply
-                if(data.user.screen_name.toLowerCase() != botUsername.toLowerCase() && 			//if it wasn't sent by the bot itself
-                   config.blacklist.indexOf(data.user.screen_name) == -1 &&					//if the sender isn't in the blacklist
-                   data.retweeted_status === undefined) {									//and if it isn't a retweet of one of our tweets
-                    
+                if (data.user.screen_name.toLowerCase() != botUsername.toLowerCase() && 			//if it wasn't sent by the bot itself
+                    config.blacklist.indexOf(data.user.screen_name) == -1 &&					//if the sender isn't in the blacklist
+                    data.retweeted_status === undefined) {									//and if it isn't a retweet of one of our tweets
+
                     var h = config.word_blacklist;
-                    for(var i = 0 ; i < h.length ; i++) {
-                        if(data.text.toLowerCase().contains(h[i].toLowerCase())) {
+                    for (var i = 0; i < h.length; i++) {
+                        if (data.text.toLowerCase().contains(h[i].toLowerCase())) {
                             LogUtils.logtrace("A blacklist word avoided", LogUtils.Colors.RED);
                             return false;
                         }
@@ -89,50 +128,49 @@
 
                     // retweet
                     LogUtils.logtrace("Trying to retweet [" + data.id + "]", LogUtils.Colors.CYAN);
-                    twitterAPI.retweetStatus(data.id_str, 
-						function(error, statusData) {
-							//when we got a response from twitter, check for an error (which can occur pretty frequently)
-							if(error) {
-								errorTwitter(error, statusData);
-							} else {
-								//if we could send the tweet just fine
-								LogUtils.logtrace("[" + statusData.retweeted_status.id_str + "] ->retweeted from [" + statusData.retweeted_status.user.screen_name + "]", LogUtils.Colors.GREEN);
+                    twitterAPI.retweetStatus(data.id_str,
+                        function (error, statusData) {
+                            //when we got a response from twitter, check for an error (which can occur pretty frequently)
+                            if (error) {
+                                errorTwitter(error, statusData);
+                            } else {
+                                //if we could send the tweet just fine
+                                LogUtils.logtrace("[" + statusData.retweeted_status.id_str + "] ->retweeted from [" + statusData.retweeted_status.user.screen_name + "]", LogUtils.Colors.GREEN);
 
-								//check if there's "[TL]" in the name of the but
-								var tweetLimitCheck = statusData.user.name.match(/(\[TL\]) (.*)/);	
+                                //check if there's "[TL]" in the name of the but
+                                var tweetLimitCheck = statusData.user.name.match(/(\[TL\]) (.*)/);
 
-								//if we just got out of tweet limit, we need to update the bot's name
-								if(tweetLimitCheck != null) {
-									//DO EET
-									twitterAPI.updateProfile({name: tweetLimitCheck[2]}, function(error, data) {
-										if(error) {
-											LogUtils.logtrace("error while trying to change username (going OUT of TL)", LogUtils.Colors.RED);
-										} else {
-											hasNotifiedTL = true;
-											LogUtils.logtrace("gone OUT of tweet limit", LogUtils.Colors.RED);
-										}
-									});
-								}
-							}
-						}
-					);
+                                //if we just got out of tweet limit, we need to update the bot's name
+                                if (tweetLimitCheck != null) {
+                                    //DO EET
+                                    twitterAPI.updateProfile({name: tweetLimitCheck[2]}, function (error, data) {
+                                        if (error) {
+                                            LogUtils.logtrace("error while trying to change username (going OUT of TL)", LogUtils.Colors.RED);
+                                        } else {
+                                            hasNotifiedTL = true;
+                                            LogUtils.logtrace("gone OUT of tweet limit", LogUtils.Colors.RED);
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    );
 
                     var result = '';
 
                     LogUtils.logtrace(data.text, LogUtils.Colors.CYAN);
-                    
+
                     var text = data.text.toLowerCase();
 
-                    if(text.contains('patate volante') || text.contains('patates volantes') || 
-                       text.contains('patate ailée') || 
-                       text.contains('patate avion') ||
-                       text.contains('patate fusée') || 
-                       text.contains('tubercule volant') || 
-                       text.contains('tubercule volant') ||
-                       text.contains('pomme de terre volante'))
-                    {
+                    if (text.contains('patate volante') || text.contains('patates volantes') ||
+                        text.contains('patate ailée') ||
+                        text.contains('patate avion') ||
+                        text.contains('patate fusée') ||
+                        text.contains('tubercule volant') ||
+                        text.contains('tubercule volant') ||
+                        text.contains('pomme de terre volante')) {
                         var rand = parseInt(Math.random() * (4 - 0) + 0);
-                        switch(rand) {
+                        switch (rand) {
                             case 3 :
                                 result = 'Patate volante ? Oui c\'est moi ! La seule, l\'unique !';
                                 break;
@@ -149,64 +187,64 @@
                                 result = 'Carotte Volante ! Qu\'est-ce que je raconte moi ?';
                                 break;
                         }
-                    } 
-                    else if(text.contains('frite volante') || text.contains('chips volante')) {
+                    }
+                    else if (text.contains('frite volante') || text.contains('chips volante')) {
                         result = 'Le tout à base de patate volante, bien sûr !!!';
                     }
-                    else if(text.contains('patate sautée') || text.contains('patates sautées')) {
+                    else if (text.contains('patate sautée') || text.contains('patates sautées')) {
                         result = 'Les patates volantes sautées ne retombent pas dans la poêle !';
-                    } 
-                    else if(text.contains('pomme de terre rôtie')) {
+                    }
+                    else if (text.contains('pomme de terre rôtie')) {
                         result = 'N\'essayez pas de nous rôtir, les patates volantes sont des dures à cuire.';
-                    } 
-                    else if(text.contains('patate farcie') || text.contains('patates farcies')) {
+                    }
+                    else if (text.contains('patate farcie') || text.contains('patates farcies')) {
                         result = 'Éventrer des patates est interdit pas la convention de Genève.';
                     }
                     /*else if(text.contains('cipt')) { // maybe we can find a solution
                         result = 'Ici, c\'est hachis ! http://tinyurl.com/o9a2ly7 #CIPT';
-                    }*/ 
-                    else if(text.contains('axomama')) {
+                    }*/
+                    else if (text.contains('axomama')) {
                         result = 'Que la force de la toute puissante patate soit avec toi ! http://tinyurl.com/oa5jktv';
-                    } 
-                    else if(text.contains('pomme de terre en fête')) {
+                    }
+                    else if (text.contains('pomme de terre en fête')) {
                         result = 'La vie, c\'est la fête ! http://www.belledulie.fr/';
                     }
                     else {
                         result = 'Les patates volantes sont nos amies !';
                     }
-                    
+
                     var today = new Date();
                     var tweetDone = '@' + data.user.screen_name + " " + result + " " + (today.getHours()) % 24 + "h" + ('0' + today.getMinutes()).slice(-2);
                     LogUtils.logtrace(tweetDone, LogUtils.Colors.YELLOW);
 
                     //reply to the tweet that mentionned us
-                    twitterAPI.updateStatus(tweetDone.substring(0, 139), { in_reply_to_status_id: data.id_str }, 
-						function(error, statusData) {
-							//when we got a response from twitter, check for an error (which can occur pretty frequently)
-							if(error) {
-								errorTwitter(error, statusData);
-							} else {
-								//if we could send the tweet just fine
-								LogUtils.logtrace("[" + statusData.in_reply_to_status_id_str + "] ->replied to [" + statusData.in_reply_to_screen_name + "]", LogUtils.Colors.GREEN);
+                    twitterAPI.updateStatus(tweetDone.substring(0, 139), {in_reply_to_status_id: data.id_str},
+                        function (error, statusData) {
+                            //when we got a response from twitter, check for an error (which can occur pretty frequently)
+                            if (error) {
+                                errorTwitter(error, statusData);
+                            } else {
+                                //if we could send the tweet just fine
+                                LogUtils.logtrace("[" + statusData.in_reply_to_status_id_str + "] ->replied to [" + statusData.in_reply_to_screen_name + "]", LogUtils.Colors.GREEN);
 
-								//check if there's "[TL]" in the name of the but
-								var tweetLimitCheck = statusData.user.name.match(/(\[TL\]) (.*)/);	
+                                //check if there's "[TL]" in the name of the but
+                                var tweetLimitCheck = statusData.user.name.match(/(\[TL\]) (.*)/);
 
-								//if we just got out of tweet limit, we need to update the bot's name
-								if(tweetLimitCheck != null) {
-									//DO EET
-									twitterAPI.updateProfile({name: tweetLimitCheck[2]}, function(error, data) {
-										if(error) {
-											LogUtils.logtrace("error while trying to change username (going OUT of TL)", LogUtils.Colors.RED);
-										} else {
-											hasNotifiedTL = true;
-											LogUtils.logtrace("gone OUT of tweet limit", LogUtils.Colors.RED);
-										}
-									});
-								}
-							}
-						}
-					);
+                                //if we just got out of tweet limit, we need to update the bot's name
+                                if (tweetLimitCheck != null) {
+                                    //DO EET
+                                    twitterAPI.updateProfile({name: tweetLimitCheck[2]}, function (error, data) {
+                                        if (error) {
+                                            LogUtils.logtrace("error while trying to change username (going OUT of TL)", LogUtils.Colors.RED);
+                                        } else {
+                                            hasNotifiedTL = true;
+                                            LogUtils.logtrace("gone OUT of tweet limit", LogUtils.Colors.RED);
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    );
                 }
             } else {
                 LogUtils.logtrace("data.text is not defined", LogUtils.Colors.RED);
@@ -224,7 +262,7 @@
 
     function onStreamError(e) {
         //when the stream is disconnected, connect again
-        if(!e.code) e.code = "unknown";
+        if (!e.code) e.code = "unknown";
         LogUtils.logtrace("streaming ended (" + e.code + ")", LogUtils.Colors.RED);
         setTimeout(initStreaming, 5000);
     }
