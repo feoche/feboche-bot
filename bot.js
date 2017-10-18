@@ -174,46 +174,45 @@
                 }
               );*/
 
+              if(!Math.floor(Math.random() * 30)) {
 
-              if (!containsRegExp(text, EXCEPTIONS)) { // If tweet doesn't contain any of the excluded terms
-                if (containsRegExp(text, PROHIBITEDWORDS.hard)) {
-                  result = RESPONSES.hard[Math.floor(Math.random() * RESPONSES.hard.length)];
-                }
-                else if (containsRegExp(text, PROHIBITEDWORDS.medium)) { // If they are brave enough to tweet that, 100% sure they'll get that
-                  result = RESPONSES.small[Math.floor(Math.random() * RESPONSES.small.length)];
-                }
-                else { // If the tweet severity is not that harmful
-                  if(!Math.floor(Math.random() * 30)) {
-                    return;
+                if (!containsRegExp(text, EXCEPTIONS)) { // If tweet doesn't contain any of the excluded terms
+                  if (containsRegExp(text, PROHIBITEDWORDS.hard)) {
+                    result = RESPONSES.hard[Math.floor(Math.random() * RESPONSES.hard.length)];
                   }
-                  result = RESPONSES.small[Math.floor(Math.random() * RESPONSES.small.length)];
-                }
+                  else if (containsRegExp(text, PROHIBITEDWORDS.medium)) { // If they are brave enough to tweet that, 100% sure they'll get that
+                    result = RESPONSES.small[Math.floor(Math.random() * RESPONSES.small.length)];
+                  }
+                  else { // If the tweet severity is not that harmful
+                    result = RESPONSES.small[Math.floor(Math.random() * RESPONSES.small.length)];
+                  }
 
-                console.log(data.text);
-                var tweetDone = '@' + data.user.screen_name + " " + result + ' \n👉 http://www.academie-francaise.fr/digital 👈';
-                //reply to the tweet that mentionned us
-                twitterAPI.updateStatus(tweetDone.substring(0, 139), {in_reply_to_status_id: data.id_str},
-                  function (error, statusData) {
-                    //when we got a response from twitter, check for an error (which can occur pretty frequently)
-                    if (error) {
-                      errorTwitter(error, statusData);
-                    } else {
-                      //check if there's "[TL]" in the name of the but
-                      //if we just got out of tweet limit, we need to update the bot's name
-                      if (statusData.user.name.match(/(\[TL\]) (.*)/) !== null) {
-                        //DO EET
-                        twitterAPI.updateProfile({name: tweetLimitCheck[2]}, function (error) {
-                          if (error) {
-                            console.log("error while trying to change username (going OUT of TL)");
-                          } else {
-                            hasNotifiedTL = true;
-                            console.log("gone OUT of tweet limit");
-                          }
-                        });
+                  console.log(data.text);
+                  var tweetDone = '@' + data.user.screen_name + " " + result + ' \n👉 http://www.academie-francaise.fr/digital 👈';
+                  //reply to the tweet that mentionned us
+                  twitterAPI.updateStatus(tweetDone.substring(0, 139), {in_reply_to_status_id: data.id_str},
+                    function (error, statusData) {
+                      //when we got a response from twitter, check for an error (which can occur pretty frequently)
+                      if (error) {
+                        errorTwitter(error, statusData);
+                      } else {
+                        //check if there's "[TL]" in the name of the but
+                        //if we just got out of tweet limit, we need to update the bot's name
+                        if (statusData.user.name.match(/(\[TL\]) (.*)/) !== null) {
+                          //DO EET
+                          twitterAPI.updateProfile({name: tweetLimitCheck[2]}, function (error) {
+                            if (error) {
+                              console.log("error while trying to change username (going OUT of TL)");
+                            } else {
+                              hasNotifiedTL = true;
+                              console.log("gone OUT of tweet limit");
+                            }
+                          });
+                        }
                       }
                     }
-                  }
-                );
+                  );
+                }
               }
             }
           }
