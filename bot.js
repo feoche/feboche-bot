@@ -223,9 +223,6 @@
                 );
               }
             }
-            else {
-              console.log('nope')
-            }
           }
         }
       }
