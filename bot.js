@@ -51,6 +51,7 @@
         'Avec le #digital, non seulement on peut, mais on doigt.',
         '- Vous voulez du #digital? - Juste un doigt.',
         'https://cdn.firstwefeast.com/assets/2014/06/Homemade-Twix-Bars.jpg',
+        '"Le #digital? C\'est trop génial !" - Louis XVI',
         'On est passé à deux doigts du numérique ;)'
       ],
       medium: [],
