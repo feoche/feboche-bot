@@ -45,6 +45,7 @@
         'Tu l\'as dit, gital !',
         'Que la force du #digital soit avec toi !',
         'Un certain doigté dans votre tweet !',
+        'Digitalement vôtre.',
         'On est passé à deux doigts du numérique ;)'
       ],
       medium: [],
