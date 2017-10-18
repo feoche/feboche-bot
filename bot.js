@@ -26,6 +26,7 @@
     },
 
     EXCEPTIONS = [
+      /dispositif\sdigital/,
       /empreinte\sdigital/,
       /photo\sdigital/,
       /Digital/,
@@ -42,7 +43,7 @@
         'Un #digital, et ça repart !',
         '#Digital un jour, #digital toujours !',
         'Tu l\'as dit, gital !',
-        'Que le force du #digital soit avec toi !',
+        'Que la force du #digital soit avec toi !',
         'Un certain doigté dans votre tweet !'
       ],
       medium: [],
@@ -186,7 +187,7 @@
                   result = RESPONSES.small[Math.floor(Math.random() * RESPONSES.small.length)];
                 }
                 var today = new Date();
-                var tweetDone = '@' + data.user.screen_name + " " + result;
+                var tweetDone = '@' + data.user.screen_name + " " + result + ' (http://www.academie-francaise.fr/digital)';
                 console.log(tweetDone);
                 //reply to the tweet that mentionned us
                 twitterAPI.updateStatus(tweetDone.substring(0, 139), {in_reply_to_status_id: data.id_str},
