@@ -53,34 +53,30 @@
 
     //the username of the bot. not set to begin with, we'll get it when authenticating
     botUsername = null,
-    hasNotifiedTL = false,
+    hasNotifiedTL = false;
 
-    //create an object using the keys we just determined
-    twitterAPI = new twitter({
-      "consumer_key": process.env.CONSUMER_TOKEN,
-      "consumer_secret": process.env.CONSUMER_SECRET,
-      "access_token_key": process.env.ACCESS_TOKEN_KEY,
-      "access_token_secret": process.env.ACCESS_TOKEN_SECRET
-    });
+  //create an object using the keys we just determined
+  var twitterAPI = new twitter({
+    consumer_key: process.env.CONSUMER_TOKEN,
+    consumer_secret: process.env.CONSUMER_SECRET,
+    access_token_key: process.env.ACCESS_TOKEN_KEY,
+    access_token_secret: process.env.ACCESS_TOKEN_SECRET
+  });
 
   //check if we have the rights to do anything
-  twitterAPI.verifyCredentials(function (error, userdata) {
-    if (error) {
-      //if we don't, we'd better stop here anyway
-      LogUtils.logtrace(error, LogUtils.Colors.RED);
-      process.exit(1);
-    } else {
-      //the credentials check returns the username, so we can store it here
-      botUsername = userdata.screen_name;
-      LogUtils.logtrace("logged in as [" + userdata.screen_name + "]", LogUtils.Colors.CYAN);
+  twitterAPI.verifyCredentials(function (userdata) {
+    //the credentials check returns the username, so we can store it here
+    botUsername = userdata.screen_name;
+    LogUtils.logtrace("logged in as [" + userdata.screen_name + "]", LogUtils.Colors.CYAN);
 
-      //start listening to tweets that contain the bot's username using the streaming api
-      initStreaming();
-    }
+    //start listening to tweets that contain the bot's username using the streaming api
+    initStreaming();
   });
 
   function contains(text, array) {
-    return array.some(function (rx) {return rx.test(text)});
+    return array.some(function (rx) {
+      return rx.test(text)
+    });
   }
 
   function errorTwitter(error) {
