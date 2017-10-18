@@ -140,7 +140,7 @@
 
             //a few checks to see if we should reply
             if (data.user.screen_name.toLowerCase() !== botUsername.toLowerCase() &&
-            	// if it wasn't sent by the bot itself
+              // if it wasn't sent by the bot itself
               data.retweeted_status === undefined) {
 
               /*
@@ -174,8 +174,7 @@
                 }
               );*/
 
-              if(!Math.floor(Math.random() * 30)) {
-
+              if (!Math.floor(Math.random() * 30)) {
                 if (!containsRegExp(text, EXCEPTIONS)) { // If tweet doesn't contain any of the excluded terms
                   if (containsRegExp(text, PROHIBITEDWORDS.hard)) {
                     result = RESPONSES.hard[Math.floor(Math.random() * RESPONSES.hard.length)];
