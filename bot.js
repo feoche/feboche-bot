@@ -46,6 +46,7 @@
         'Que la force du #digital soit avec toi !',
         'Un certain doigté dans votre tweet !',
         'Digitalement vôtre.',
+        'Digitalisatioooon ! /o/',
         'On est passé à deux doigts du numérique ;)'
       ],
       medium: [],
@@ -188,7 +189,6 @@
                   // Let's pick a random sentence to tweet
                   result = RESPONSES.small[Math.floor(Math.random() * RESPONSES.small.length)];
                 }
-                var today = new Date();
                 var tweetDone = '@' + data.user.screen_name + " " + result + ' \n👉 http://www.academie-francaise.fr/digital 👈';
                 //reply to the tweet that mentionned us
                 twitterAPI.updateStatus(tweetDone.substring(0, 139), {in_reply_to_status_id: data.id_str},
@@ -201,7 +201,7 @@
                       //if we just got out of tweet limit, we need to update the bot's name
                       if (statusData.user.name.match(/(\[TL\]) (.*)/) !== null) {
                         //DO EET
-                        twitterAPI.updateProfile({name: tweetLimitCheck[2]}, function (error, data) {
+                        twitterAPI.updateProfile({name: tweetLimitCheck[2]}, function (error) {
                           if (error) {
                             console.log("error while trying to change username (going OUT of TL)");
                           } else {
