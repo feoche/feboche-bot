@@ -114,7 +114,6 @@
     LogUtils.logtrace("streaming", LogUtils.Colors.CYAN);
 
     stream.on('data', function (data) {
-      LogUtils.logtrace("data :", data);
 
       //if it's actually there
       if (data.text !== undefined) {
