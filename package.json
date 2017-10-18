@@ -10,7 +10,6 @@
     "lib": "lib"
   },
   "dependencies": {
-    "languagedetect": "^1.1.1",
     "twitter": "^1.7.1",
     "util": "^0.10.3"
   },
