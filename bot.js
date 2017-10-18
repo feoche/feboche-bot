@@ -185,7 +185,9 @@
                   result = RESPONSES.small[Math.floor(Math.random() * RESPONSES.small.length)];
                 }
                 else { // If the tweet severity is not that harmful
-                  // Let's pick a random sentence to tweet
+                  if(!Math.floor(Math.random() * 10)) {
+                    return;
+                  }
                   result = RESPONSES.small[Math.floor(Math.random() * RESPONSES.small.length)];
                 }
                 var tweetDone = '@' + data.user.screen_name + " " + result + ' \n👉 http://www.academie-francaise.fr/digital 👈';
