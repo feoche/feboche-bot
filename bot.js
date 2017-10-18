@@ -28,7 +28,7 @@
       /affichage\sdigital/,
       /photo\sdigital/,
       /Digital/,
-      /[_.\/]digital/,
+      /[_.\/#]digital/,
       /@\w*digital/
     ],
 
@@ -132,7 +132,7 @@
 
           console.log(data.text);
 
-          var text = data.text.toLowerCase();
+          var text = data.text;
           // Only french tweets
           if (containsRegExp(text, PROHIBITEDWORDS.small.concat(PROHIBITEDWORDS.medium).concat(PROHIBITEDWORDS.hard))) { // If tweet contains 'digital'
             //a few checks to see if we should reply
