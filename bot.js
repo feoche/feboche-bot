@@ -28,7 +28,6 @@
     EXCEPTIONS = [
       /dispositif\sdigital/,
       /empreinte\sdigital/,
-      /photo\sdigital/,
       /Digital/,
       /[_.\/#]digital/,
       /@\w*digital/
