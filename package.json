@@ -6,9 +6,6 @@
   "scripts": {
     "start": "npm i && node bot.js"
   },
-  "directories": {
-    "lib": "lib"
-  },
   "dependencies": {
     "twitter": "^1.7.1",
     "util": "^0.10.3"

@@ -49,7 +49,6 @@
 
   //the twitter api module
   var ntwitter = require('ntwitter'),
-    LogUtils = require('./lib/LogUtils.js'),
 
     //the username of the bot. not set to begin with, we'll get it when authenticating
     botUsername = null,
@@ -67,12 +66,12 @@
   twitterAPI.verifyCredentials(function (error, userdata) {
     if (error) {
       //if we don't, we'd better stop here anyway
-      LogUtils.logtrace(error, LogUtils.Colors.RED);
+      console.log(error);
       process.exit(1);
     } else {
       //the credentials check returns the username, so we can store it here
       botUsername = userdata.screen_name;
-      LogUtils.logtrace("logged in as [" + userdata.screen_name + "]", LogUtils.Colors.CYAN);
+      console.log("logged in as [" + userdata.screen_name + "]");
 
       //start listening to tweets that contain the bot's username using the streaming api
       initStreaming();
@@ -86,7 +85,7 @@
   }
 
   function errorTwitter(error) {
-    LogUtils.logtrace(error, LogUtils.Colors.RED);
+    console.log(error);
 
     if (error.statusCode === 403 && !hasNotifiedTL) {
       //if we're in tweet limit, we will want to indicate that in the name of the bot
@@ -100,9 +99,9 @@
             //if the name of the bot hasn't already been changed, do it: we add "[TL]" just before its normal name
             twitterAPI.updateProfile({name: '[TL] ' + data[0].name}, function (error, data) {
               if (error) {
-                LogUtils.logtrace("error while trying to change username (going IN TL)", LogUtils.Colors.RED);
+                console.log("error while trying to change username (going IN TL)");
               } else {
-                LogUtils.logtrace("gone IN tweet limit", LogUtils.Colors.RED);
+                console.log("gone IN tweet limit");
               }
             });
           }
@@ -112,7 +111,7 @@
   }
 
   function streamCallback(stream) {
-    LogUtils.logtrace("streaming", LogUtils.Colors.CYAN);
+    console.log("streaming");
 
     stream.on('data', function (data) {
 
@@ -122,7 +121,7 @@
         if (data.lang === 'fr') {
           var result = '';
 
-          LogUtils.logtrace(data.text, LogUtils.Colors.CYAN);
+          console.log(data.text);
 
           var text = data.text.toLowerCase();
           // Only french tweets
@@ -130,9 +129,9 @@
             //a few checks to see if we should reply
             if (data.user.screen_name.toLowerCase() !== botUsername.toLowerCase() && 			// if it wasn't sent by the bot itself
               data.retweeted_status === undefined) {									                    // and if it isn't a retweet of one of our tweets
-              LogUtils.logtrace("[" + data.id_str + "] tweet from [" + data.user.screen_name + "]", LogUtils.Colors.GREEN);
+              console.log("[" + data.id_str + "] tweet from [" + data.user.screen_name + "]");
               // retweet
-              LogUtils.logtrace("Trying to retweet [" + data.id + "]", LogUtils.Colors.CYAN);
+              console.log("Trying to retweet [" + data.id + "]");
               twitterAPI.retweetStatus(data.id_str,
                 function (error, statusData) {
                   //when we got a response from twitter, check for an error (which can occur pretty frequently)
@@ -140,7 +139,7 @@
                     errorTwitter(error, statusData);
                   } else {
                     //if we could send the tweet just fine
-                    LogUtils.logtrace("[" + statusData.retweeted_status.id_str + "] ->retweeted from [" + statusData.retweeted_status.user.screen_name + "]", LogUtils.Colors.GREEN);
+                    console.log("[" + statusData.retweeted_status.id_str + "] ->retweeted from [" + statusData.retweeted_status.user.screen_name + "]");
                     //check if there's "[TL]" in the name of the but
                     var tweetLimitCheck = statusData.user.name.match(/(\[TL\]) (.*)/);
                     //if we just got out of tweet limit, we need to update the bot's name
@@ -148,10 +147,10 @@
                       //DO EET
                       twitterAPI.updateProfile({name: tweetLimitCheck[2]}, function (error, data) {
                         if (error) {
-                          LogUtils.logtrace("error while trying to change username (going OUT of TL)", LogUtils.Colors.RED);
+                          console.log("error while trying to change username (going OUT of TL)");
                         } else {
                           hasNotifiedTL = true;
-                          LogUtils.logtrace("gone OUT of tweet limit", LogUtils.Colors.RED);
+                          console.log("gone OUT of tweet limit");
                         }
                       });
                     }
@@ -171,7 +170,7 @@
                 }
                 var today = new Date();
                 var tweetDone = '@' + data.user.screen_name + " " + result + " " + (today.getHours()) % 24 + "h" + ('0' + today.getMinutes()).slice(-2);
-                LogUtils.logtrace(tweetDone, LogUtils.Colors.YELLOW);
+                console.log(tweetDone);
                 //reply to the tweet that mentionned us
                 twitterAPI.updateStatus(tweetDone.substring(0, 139), {in_reply_to_status_id: data.id_str},
                   function (error, statusData) {
@@ -180,17 +179,17 @@
                       errorTwitter(error, statusData);
                     } else {
                       //if we could send the tweet just fine
-                      LogUtils.logtrace("[" + statusData.in_reply_to_status_id_str + "] ->replied to [" + statusData.in_reply_to_screen_name + "]", LogUtils.Colors.GREEN);
+                      console.log("[" + statusData.in_reply_to_status_id_str + "] ->replied to [" + statusData.in_reply_to_screen_name + "]");
                       //check if there's "[TL]" in the name of the but
                       //if we just got out of tweet limit, we need to update the bot's name
                       if (statusData.user.name.match(/(\[TL\]) (.*)/) !== null) {
                         //DO EET
                         twitterAPI.updateProfile({name: tweetLimitCheck[2]}, function (error, data) {
                           if (error) {
-                            LogUtils.logtrace("error while trying to change username (going OUT of TL)", LogUtils.Colors.RED);
+                            console.log("error while trying to change username (going OUT of TL)");
                           } else {
                             hasNotifiedTL = true;
-                            LogUtils.logtrace("gone OUT of tweet limit", LogUtils.Colors.RED);
+                            console.log("gone OUT of tweet limit");
                           }
                         });
                       }
@@ -212,7 +211,7 @@
 
   function onStreamError(e) {
     //when the stream is disconnected, connect again
-    LogUtils.logtrace("Streaming ended (" + e.code || "unknown" + ")", LogUtils.Colors.RED);
+    console.log("Streaming ended (" + e.code || "unknown" + ")");
     setTimeout(initStreaming, 5000);
   }
 
