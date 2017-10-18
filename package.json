@@ -1,0 +1,35 @@
+{
+  "name": "digital-twitter-bot",
+  "version": "1.0.0",
+  "description": "Twitter bot that listens for the word \"digital\" & replies to it w/ a specific answer. ",
+  "main": "bot.js",
+  "scripts": {
+    "start" : "node bot.js" }
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "dependencies": {
+    "languagedetect": "^1.1.1",
+    "ntwitter": "^0.5.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/feoche/digital-twitter-bot.git"
+  },
+  "keywords": [
+    "digital",
+    "twitter",
+    "bot"
+  ],
+  "author": "François Eoche",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/feoche/digital-twitter-bot/issues"
+  },
+  "homepage": "https://github.com/feoche/digital-twitter-bot#readme"
+}
