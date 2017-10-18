@@ -28,6 +28,7 @@
     EXCEPTIONS = [
       /dispositif\sdigital/,
       /empreinte\sdigital/,
+      /affichage\sdigital/,
       /Digital/,
       /[_.\/#]digital/,
       /@\w*digital/
@@ -50,17 +51,66 @@
         'Oh, on a mis le doigt sur quelque chose?',
         'Avec le #digital, non seulement on peut, mais on doigt.',
         '- Vous voulez du #digital? - Juste un doigt.',
-        'https://cdn.firstwefeast.com/assets/2014/06/Homemade-Twix-Bars.jpg',
+        'Avec le #digital, on se met le doigt dans l\'œil',
+        'Le #digital, c\'est mon p\'tit doigt qui me l\'a dit !',
+        'Le #digital vous obéit au doigt et à l\'œil !',
+        'Aujourd\'hui, grâce à vous, le #digital est montré du doigt.',
+        'Un effort, vous touchez du doigt le numérique !',
+        'On peut aussi ne rien faire de ses dix doigts, avec le #digital',
+        'Le #digital et le numérique, ils sont comme les doigts de la main',
+        'Attention, d\'ici je peux voir vos doigts de fée du #digital ;)',
+        'Là, clairement, vous mettez le doigt sur la plaie.',
+        'Popopo ! Carton jaune monsieur l\'arbitre !',
+        'Le #digital, vous connaissez ça sur le bout des doigts.',
         '"Le #digital? C\'est trop génial !" - Louis XVI',
+        '"Le #digital? SWAG !" - Victor Hugo',
         'On est passé à deux doigts du numérique ;)'
       ],
-      medium: [],
+      medium: [
+        'https://cdn.firstwefeast.com/assets/2014/06/Homemade-Twix-Bars.jpg'
+      ],
       hard: [
         'https://i.imgur.com/38Cs6G0.jpg',
         'https://i.imgur.com/hIwO2mF.jpg',
         'https://i.imgur.com/YALJMd8.jpg'
       ]
-    };
+    },
+
+    EMOJIS = [
+      '👐',
+      '🙌',
+      '👏',
+      '🙏',
+      '🤝',
+      '👍',
+      '👎',
+      '👊',
+      '✊',
+      '🤛',
+      '🤜',
+      '🤞',
+      '✌',
+      '️',
+      '🤘',
+      '👌',
+      '👈',
+      '👉',
+      '👆',
+      '👇',
+      '☝',
+      '️',
+      '✋',
+      '🤚',
+      '🖐',
+      '🖖',
+      '👋',
+      '🤙',
+      '✍',
+      '️',
+      '💅',
+      '🤳',
+      '🤗'
+    ];
 
   //the twitter api module
   var ntwitter = require('ntwitter'),
@@ -101,32 +151,6 @@
     return array.some(function (rx) {
       return rx.test(text)
     });
-  }
-
-  function errorTwitter(error) {
-    console.log(error);
-
-    if (error.statusCode === 403 && !hasNotifiedTL) {
-      //if we're in tweet limit, we will want to indicate that in the name of the bot
-      //so, if we aren't sure we notified the users yet, get the current twitter profile of the bot
-      twitterAPI.showUser(botUsername, function (error, data) {
-        if (!error) {
-          if (data[0].name.match(/(\[TL\]) (.*)/)) {
-            //if we already changed the name but couldn't remember it (maybe it was during the previous session)
-            hasNotifiedTL = true;
-          } else {
-            //if the name of the bot hasn't already been changed, do it: we add "[TL]" just before its normal name
-            twitterAPI.updateProfile({name: '[TL] ' + data[0].name}, function (error, data) {
-              if (error) {
-                console.log("error while trying to change username (going IN TL)");
-              } else {
-                console.log("gone IN tweet limit");
-              }
-            });
-          }
-        }
-      });
-    }
   }
 
   function streamCallback(stream) {
@@ -204,7 +228,29 @@
                   function (error, statusData) {
                     //when we got a response from twitter, check for an error (which can occur pretty frequently)
                     if (error) {
-                      errorTwitter(error, statusData);
+                      console.log(error);
+
+                      if (error.statusCode === 403 && !hasNotifiedTL) {
+                        //if we're in tweet limit, we will want to indicate that in the name of the bot
+                        //so, if we aren't sure we notified the users yet, get the current twitter profile of the bot
+                        twitterAPI.showUser(botUsername, function (error, data) {
+                          if (!error) {
+                            if (data[0].name.match(/(\[TL\]) (.*)/)) {
+                              //if we already changed the name but couldn't remember it (maybe it was during the previous session)
+                              hasNotifiedTL = true;
+                            } else {
+                              //if the name of the bot hasn't already been changed, do it: we add "[TL]" just before its normal name
+                              twitterAPI.updateProfile({name: '[TL] ' + data[0].name}, function (error) {
+                                if (error) {
+                                  console.log("error while trying to change username (going IN TL)");
+                                } else {
+                                  console.log("gone IN tweet limit");
+                                }
+                              });
+                            }
+                          }
+                        });
+                      }
                     } else {
                       //check if there's "[TL]" in the name of the but
                       //if we just got out of tweet limit, we need to update the bot's name
