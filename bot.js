@@ -190,7 +190,6 @@
                 }
                 var today = new Date();
                 var tweetDone = '@' + data.user.screen_name + " " + result + ' \n👉 http://www.academie-francaise.fr/digital 👈';
-                console.log(tweetDone);
                 //reply to the tweet that mentionned us
                 twitterAPI.updateStatus(tweetDone.substring(0, 139), {in_reply_to_status_id: data.id_str},
                   function (error, statusData) {
