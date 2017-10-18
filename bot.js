@@ -188,7 +188,7 @@
                   result = RESPONSES.small[Math.floor(Math.random() * RESPONSES.small.length)];
                 }
                 var today = new Date();
-                var tweetDone = '@' + data.user.screen_name + " " + result + ' \n(http://www.academie-francaise.fr/digital)';
+                var tweetDone = '@' + data.user.screen_name + " " + result + ' \n👉 http://www.academie-francaise.fr/digital 👈';
                 console.log(tweetDone);
                 //reply to the tweet that mentionned us
                 twitterAPI.updateStatus(tweetDone.substring(0, 139), {in_reply_to_status_id: data.id_str},
@@ -197,8 +197,6 @@
                     if (error) {
                       errorTwitter(error, statusData);
                     } else {
-                      //if we could send the tweet just fine
-                      console.log("[" + statusData.in_reply_to_status_id_str + "] ->replied to [" + statusData.in_reply_to_screen_name + "]");
                       //check if there's "[TL]" in the name of the but
                       //if we just got out of tweet limit, we need to update the bot's name
                       if (statusData.user.name.match(/(\[TL\]) (.*)/) !== null) {
