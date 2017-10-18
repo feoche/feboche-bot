@@ -8,22 +8,23 @@
 
   var PROHIBITEDWORDS = {
       small: [
-        /digital/,
-        /digitale/,
-        /digitales/
+        'digital',
+        'digitale',
+        'digitales'
       ],
       medium: [],
       hard: [
-        /transformation\sdigitale/
+        'transformation digitale'
       ]
     },
 
     EXCEPTIONS = [
-      /affichage\sdigital/,
-      /photo\sdigital/,
-      /Digital\sFactory/,
-      /@\w*digital/,
-      /\/\/digital/
+      'affichage digital',
+      'photo digital',
+      'Digital Factory',
+      '@digital',
+      '#digital',
+      'digital'
     ],
 
     RESPONSES = {
@@ -233,7 +234,7 @@
   function initStreaming() {
     //initialize the stream and everything else
     var keyWords = PROHIBITEDWORDS.small.concat(PROHIBITEDWORDS.medium).concat(PROHIBITEDWORDS.hard);
-    twitterAPI.stream('statuses/filter', {track: keyWords.join(', ')}, streamCallback);
+    twitterAPI.stream('statuses/filter', {track: keyWords.join(',')}, streamCallback);
   }
 
 })();
