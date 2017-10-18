@@ -44,8 +44,13 @@
         'Tu l\'as dit, gital !',
         'Que la force du #digital soit avec toi !',
         'Un certain doigté dans votre tweet !',
-        'Digitalement vôtre.',
-        'Digitalisatioooon ! /o/',
+        '#Digitalement vôtre.',
+        '#Digitalisatioooon ! /o/',
+        'On croise les doigts pour que le #digital perdure !',
+        'Oh, on a mis le doigt sur quelque chose?',
+        'Avec le #digital, non seulement on peut, mais on doigt.',
+        '- Vous voulez du #digital? - Juste un doigt.',
+        'https://cdn.firstwefeast.com/assets/2014/06/Homemade-Twix-Bars.jpg',
         'On est passé à deux doigts du numérique ;)'
       ],
       medium: [],
@@ -127,91 +132,95 @@
     console.log("streaming");
 
     stream.on('data', function (data) {
+      // If text exists & only french tweets
+      if (data.text && data.lang === 'fr') {
+        var result = '',
+          text = data.text;
 
-      //if it's actually there
-      if (data.text !== undefined) {
+        // If tweet contains any 'digital' subject
+        if (containsRegExp(text, PROHIBITEDWORDS.small.concat(PROHIBITEDWORDS.medium).concat(PROHIBITEDWORDS.hard))) {
 
-        if (data.lang === 'fr') {
-          var result = '';
+          //a few checks to see if we should reply
+          if (data.user.screen_name.toLowerCase() !== botUsername.toLowerCase() &&
+            // if it wasn't sent by the bot itself
+            data.retweeted_status === undefined) {
 
-          var text = data.text;
-          // Only french tweets
-          if (containsRegExp(text, PROHIBITEDWORDS.small.concat(PROHIBITEDWORDS.medium).concat(PROHIBITEDWORDS.hard))) { // If tweet contains 'digital'
-
-            //a few checks to see if we should reply
-            if (data.user.screen_name.toLowerCase() !== botUsername.toLowerCase() &&
-              // if it wasn't sent by the bot itself
-              data.retweeted_status === undefined) {
-
-              /*
-              // and if it isn't a retweet of one of our tweets
-              console.log("[" + data.id_str + "] tweet from [" + data.user.screen_name + "]");
-              // retweet
-              console.log("Trying to retweet [" + data.id + "]");
-              twitterAPI.retweetStatus(data.id_str,
-                function (error, statusData) {
-                  //when we got a response from twitter, check for an error (which can occur pretty frequently)
-                  if (error) {
-                    errorTwitter(error, statusData);
-                  } else {
-                    //if we could send the tweet just fine
-                    console.log("[" + statusData.retweeted_status.id_str + "] ->retweeted from [" + statusData.retweeted_status.user.screen_name + "]");
-                    //check if there's "[TL]" in the name of the but
-                    var tweetLimitCheck = statusData.user.name.match(/(\[TL\]) (.*)/);
-                    //if we just got out of tweet limit, we need to update the bot's name
-                    if (tweetLimitCheck !== null) {
-                      //DO EET
-                      twitterAPI.updateProfile({name: tweetLimitCheck[2]}, function (error, data) {
-                        if (error) {
-                          console.log("error while trying to change username (going OUT of TL)");
-                        } else {
-                          hasNotifiedTL = true;
-                          console.log("gone OUT of tweet limit");
-                        }
-                      });
-                    }
+            /*
+            // RETWEET
+            // and if it isn't a retweet of one of our tweets
+            console.log("[" + data.id_str + "] tweet from [" + data.user.screen_name + "]");
+            // retweet
+            console.log("Trying to retweet [" + data.id + "]");
+            twitterAPI.retweetStatus(data.id_str,
+              function (error, statusData) {
+                //when we got a response from twitter, check for an error (which can occur pretty frequently)
+                if (error) {
+                  errorTwitter(error, statusData);
+                } else {
+                  //if we could send the tweet just fine
+                  console.log("[" + statusData.retweeted_status.id_str + "] ->retweeted from [" + statusData.retweeted_status.user.screen_name + "]");
+                  //check if there's "[TL]" in the name of the but
+                  var tweetLimitCheck = statusData.user.name.match(/(\[TL\]) (.*)/);
+                  //if we just got out of tweet limit, we need to update the bot's name
+                  if (tweetLimitCheck !== null) {
+                    //DO EET
+                    twitterAPI.updateProfile({name: tweetLimitCheck[2]}, function (error, data) {
+                      if (error) {
+                        console.log("error while trying to change username (going OUT of TL)");
+                      } else {
+                        hasNotifiedTL = true;
+                        console.log("gone OUT of tweet limit");
+                      }
+                    });
                   }
                 }
-              );*/
+              }
+            );*/
 
-              if (!Math.floor(Math.random() * 30)) {
-                if (!containsRegExp(text, EXCEPTIONS)) { // If tweet doesn't contain any of the excluded terms
-                  if (containsRegExp(text, PROHIBITEDWORDS.hard)) {
-                    result = RESPONSES.hard[Math.floor(Math.random() * RESPONSES.hard.length)];
-                  }
-                  else if (containsRegExp(text, PROHIBITEDWORDS.medium)) { // If they are brave enough to tweet that, 100% sure they'll get that
-                    result = RESPONSES.small[Math.floor(Math.random() * RESPONSES.small.length)];
-                  }
-                  else { // If the tweet severity is not that harmful
-                    result = RESPONSES.small[Math.floor(Math.random() * RESPONSES.small.length)];
-                  }
+            // Need to randomize the number of tweets we are checking
+            if (!Math.floor(Math.random() * 30)) {
 
-                  console.log(data.text);
-                  var tweetDone = '@' + data.user.screen_name + " " + result + ' \n👉 http://www.academie-francaise.fr/digital 👈';
-                  //reply to the tweet that mentionned us
-                  twitterAPI.updateStatus(tweetDone.substring(0, 139), {in_reply_to_status_id: data.id_str},
-                    function (error, statusData) {
-                      //when we got a response from twitter, check for an error (which can occur pretty frequently)
-                      if (error) {
-                        errorTwitter(error, statusData);
-                      } else {
-                        //check if there's "[TL]" in the name of the but
-                        //if we just got out of tweet limit, we need to update the bot's name
-                        if (statusData.user.name.match(/(\[TL\]) (.*)/) !== null) {
-                          //DO EET
-                          twitterAPI.updateProfile({name: tweetLimitCheck[2]}, function (error) {
-                            if (error) {
-                              console.log("error while trying to change username (going OUT of TL)");
-                            } else {
-                              hasNotifiedTL = true;
-                              console.log("gone OUT of tweet limit");
-                            }
-                          });
-                        }
+              // If tweet doesn't contain any of the excluded terms
+              if (!containsRegExp(text, EXCEPTIONS)) {
+
+                // If they want to learn it the hard way
+                if (containsRegExp(text, PROHIBITEDWORDS.hard)) {
+                  result = RESPONSES.hard[Math.floor(Math.random() * RESPONSES.hard.length)];
+                }
+                // If they are brave enough to tweet that, 100% sure they'll get that
+                else if (containsRegExp(text, PROHIBITEDWORDS.medium)) {
+                  result = RESPONSES.small[Math.floor(Math.random() * RESPONSES.small.length)];
+                }
+                // If the tweet severity is not that harmful
+                else {
+                  result = RESPONSES.small[Math.floor(Math.random() * RESPONSES.small.length)];
+                }
+
+                console.log(data.text);
+                var tweetDone = '@' + data.user.screen_name + " " + result + ' \n👉 http://www.academie-francaise.fr/digital 👈';
+                //reply to the tweet that mentionned us
+                twitterAPI.updateStatus(tweetDone.substring(0, 139), {in_reply_to_status_id: data.id_str},
+                  function (error, statusData) {
+                    //when we got a response from twitter, check for an error (which can occur pretty frequently)
+                    if (error) {
+                      errorTwitter(error, statusData);
+                    } else {
+                      //check if there's "[TL]" in the name of the but
+                      //if we just got out of tweet limit, we need to update the bot's name
+                      if (statusData.user.name.match(/(\[TL\]) (.*)/) !== null) {
+                        //DO EET
+                        twitterAPI.updateProfile({name: tweetLimitCheck[2]}, function (error) {
+                          if (error) {
+                            console.log("error while trying to change username (going OUT of TL)");
+                          } else {
+                            hasNotifiedTL = true;
+                            console.log("gone OUT of tweet limit");
+                          }
+                        });
                       }
                     }
-                  );
-                }
+                  }
+                );
               }
             }
           }
