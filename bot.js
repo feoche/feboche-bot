@@ -226,8 +226,7 @@
 
   function initStreaming() {
     //initialize the stream and everything else
-    var keyWords = PROHIBITEDWORDS.small.concat(PROHIBITEDWORDS.medium).concat(PROHIBITEDWORDS.hard);
-    twitterAPI.stream('statuses/filter', {track: keyWords.join(',')}, streamCallback);
+    twitterAPI.stream('statuses/filter', {track: SEARCHWORDS.join(',')}, streamCallback);
   }
 
 })();
