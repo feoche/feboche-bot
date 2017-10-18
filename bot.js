@@ -20,12 +20,14 @@
       ],
       medium: [],
       hard: [
-        /transformation\sdigitale/
+        /transformation\sdigitale/,
+        /#transformationdigitale/,
       ]
     },
 
     EXCEPTIONS = [
       /affichage\sdigital/,
+      /empreinte\sdigital/,
       /photo\sdigital/,
       /Digital/,
       /[_.\/#]digital/,
@@ -34,14 +36,14 @@
 
     RESPONSES = {
       small: [
-        'Vive le digital !',
-        'Le digital c\'est la vie.',
-        'Le digital est notre ami.',
-        'Si y\'a du digital, c\'est légal',
-        'Un digital, et ça repart !',
-        'Digital un jour, digital toujours !',
+        'Vive le #digital !',
+        'Le #digital c\'est la vie.',
+        'Le #digital est notre ami.',
+        'Si y\'a du #digital, c\'est légal',
+        'Un #digital, et ça repart !',
+        '#Digital un jour, #digital toujours !',
         'Tu l\'as dit, gital !',
-        'Que le force du digital soit avec toi !',
+        'Que le force du #digital soit avec toi !',
         'Un certain doigté dans votre tweet !'
       ],
       medium: [],
@@ -135,9 +137,14 @@
           var text = data.text;
           // Only french tweets
           if (containsRegExp(text, PROHIBITEDWORDS.small.concat(PROHIBITEDWORDS.medium).concat(PROHIBITEDWORDS.hard))) { // If tweet contains 'digital'
+
             //a few checks to see if we should reply
-            if (data.user.screen_name.toLowerCase() !== botUsername.toLowerCase() && 			// if it wasn't sent by the bot itself
-              data.retweeted_status === undefined) {									                    // and if it isn't a retweet of one of our tweets
+            if (data.user.screen_name.toLowerCase() !== botUsername.toLowerCase() &&
+            	// if it wasn't sent by the bot itself
+              data.retweeted_status === undefined) {
+
+              /*
+              // and if it isn't a retweet of one of our tweets
               console.log("[" + data.id_str + "] tweet from [" + data.user.screen_name + "]");
               // retweet
               console.log("Trying to retweet [" + data.id + "]");
@@ -165,17 +172,19 @@
                     }
                   }
                 }
-              );
+              );*/
+
+
               if (!containsRegExp(text, EXCEPTIONS)) { // If tweet doesn't contain any of the excluded terms
-                if (containsRegExp(text, PROHIBITEDWORDS.small)) { // If the tweet severity is not that harmful
-                  // Let's pick a random sentence to tweet
-                  result = RESPONSES.small[Math.floor(Math.random() * RESPONSES.small.length)];
+                if (containsRegExp(text, PROHIBITEDWORDS.hard)) {
+                  result = RESPONSES.hard[Math.floor(Math.random() * RESPONSES.hard.length)];
                 }
                 else if (containsRegExp(text, PROHIBITEDWORDS.medium)) { // If they are brave enough to tweet that, 100% sure they'll get that
                   result = RESPONSES.small[Math.floor(Math.random() * RESPONSES.small.length)];
                 }
-                else { // They'll learn it the hard way
-                  result = RESPONSES.hard[Math.floor(Math.random() * RESPONSES.hard.length)];
+                else { // If the tweet severity is not that harmful
+                  // Let's pick a random sentence to tweet
+                  result = RESPONSES.small[Math.floor(Math.random() * RESPONSES.small.length)];
                 }
                 var today = new Date();
                 var tweetDone = '@' + data.user.screen_name + " " + result;
