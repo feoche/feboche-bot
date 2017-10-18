@@ -178,7 +178,7 @@
                   result = RESPONSES.hard[Math.floor(Math.random() * RESPONSES.hard.length)];
                 }
                 var today = new Date();
-                var tweetDone = '@' + data.user.screen_name + " " + result + " " + (today.getHours()) % 24 + "h" + ('0' + today.getMinutes()).slice(-2);
+                var tweetDone = '@' + data.user.screen_name + " " + result;
                 console.log(tweetDone);
                 //reply to the tweet that mentionned us
                 twitterAPI.updateStatus(tweetDone.substring(0, 139), {in_reply_to_status_id: data.id_str},
