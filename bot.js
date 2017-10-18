@@ -23,6 +23,7 @@
       'photo digital',
       'Digital Factory',
       '@digital',
+      '_digital',
       '#digital',
       'digital'
     ],
@@ -79,9 +80,7 @@
   });
 
   function contains(text, array) {
-    return array.some(function (rx) {
-      return rx.test(text)
-    });
+    return array.indexOf(text) > -1;
   }
 
   function errorTwitter(error) {
