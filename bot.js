@@ -183,7 +183,7 @@
                   result = RESPONSES.small[Math.floor(Math.random() * RESPONSES.small.length)];
                 }
                 else { // If the tweet severity is not that harmful
-                  if(!Math.floor(Math.random() * 10)) {
+                  if(!Math.floor(Math.random() * 30)) {
                     return;
                   }
                   result = RESPONSES.small[Math.floor(Math.random() * RESPONSES.small.length)];
