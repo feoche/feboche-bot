@@ -6,26 +6,30 @@
 
 (function () {
 
+  var SEARCHWORDS = [
+    'digital',
+    'digitale',
+    'digitales'
+  ];
+
   var PROHIBITEDWORDS = {
       small: [
-        'digital',
-        'digitale',
-        'digitales'
+        /digital/,
+        /digitale/,
+        /digitales/
       ],
       medium: [],
       hard: [
-        'transformation digitale'
+        /transformation\sdigitale/
       ]
     },
 
     EXCEPTIONS = [
-      'affichage digital',
-      'photo digital',
-      'Digital Factory',
-      '@digital',
-      '_digital',
-      '#digital',
-      'digital'
+      /affichage\sdigital/,
+      /photo\sdigital/,
+      /Digital/,
+      /[_.\/]digital/,
+      /@\w*digital/
     ],
 
     RESPONSES = {
@@ -83,6 +87,12 @@
     return array.indexOf(text) > -1;
   }
 
+  function containsRegExp(text, array) {
+    return array.some(function (rx) {
+      return rx.test(text)
+    });
+  }
+
   function errorTwitter(error) {
     console.log(error);
 
@@ -124,7 +134,7 @@
 
           var text = data.text.toLowerCase();
           // Only french tweets
-          if (contains(text, PROHIBITEDWORDS.small.concat(PROHIBITEDWORDS.medium).concat(PROHIBITEDWORDS.hard))) { // If tweet contains 'digital'
+          if (containsRegExp(text, PROHIBITEDWORDS.small.concat(PROHIBITEDWORDS.medium).concat(PROHIBITEDWORDS.hard))) { // If tweet contains 'digital'
             //a few checks to see if we should reply
             if (data.user.screen_name.toLowerCase() !== botUsername.toLowerCase() && 			// if it wasn't sent by the bot itself
               data.retweeted_status === undefined) {									                    // and if it isn't a retweet of one of our tweets
@@ -156,12 +166,12 @@
                   }
                 }
               );
-              if (!contains(text, EXCEPTIONS)) { // If tweet doesn't contain any of the excluded terms
-                if (contains(text, PROHIBITEDWORDS.small)) { // If the tweet severity is not that harmful
+              if (!containsRegExp(text, EXCEPTIONS)) { // If tweet doesn't contain any of the excluded terms
+                if (containsRegExp(text, PROHIBITEDWORDS.small)) { // If the tweet severity is not that harmful
                   // Let's pick a random sentence to tweet
                   result = RESPONSES.small[Math.floor(Math.random() * RESPONSES.small.length)];
                 }
-                else if (contains(text, PROHIBITEDWORDS.medium)) { // If they are brave enough to tweet that, 100% sure they'll get that
+                else if (containsRegExp(text, PROHIBITEDWORDS.medium)) { // If they are brave enough to tweet that, 100% sure they'll get that
                   result = RESPONSES.small[Math.floor(Math.random() * RESPONSES.small.length)];
                 }
                 else { // They'll learn it the hard way
