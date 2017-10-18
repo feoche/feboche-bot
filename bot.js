@@ -44,7 +44,8 @@
         '#Digital un jour, #digital toujours !',
         'Tu l\'as dit, gital !',
         'Que la force du #digital soit avec toi !',
-        'Un certain doigté dans votre tweet !'
+        'Un certain doigté dans votre tweet !',
+        'On est passé à deux doigts du numérique ;)'
       ],
       medium: [],
       hard: [
@@ -187,7 +188,7 @@
                   result = RESPONSES.small[Math.floor(Math.random() * RESPONSES.small.length)];
                 }
                 var today = new Date();
-                var tweetDone = '@' + data.user.screen_name + " " + result + ' (http://www.academie-francaise.fr/digital)';
+                var tweetDone = '@' + data.user.screen_name + " " + result + ' \n(http://www.academie-francaise.fr/digital)';
                 console.log(tweetDone);
                 //reply to the tweet that mentionned us
                 twitterAPI.updateStatus(tweetDone.substring(0, 139), {in_reply_to_status_id: data.id_str},
