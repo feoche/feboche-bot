@@ -21,12 +21,11 @@
       medium: [],
       hard: [
         /transformation\sdigitale/,
-        /#transformationdigitale/,
+        /#transformationdigitale/
       ]
     },
 
     EXCEPTIONS = [
-      /affichage\sdigital/,
       /empreinte\sdigital/,
       /photo\sdigital/,
       /Digital/,
