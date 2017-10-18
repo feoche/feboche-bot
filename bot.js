@@ -55,11 +55,16 @@
     botUsername = null,
     hasNotifiedTL = false,
 
-    //get the config (API keys, etc.)
-    config = require('./config.json'),
+    //get the config (API keys)
+    keys = {
+      "consumer_key": process.env.CONSUMER_TOKEN,
+      "consumer_secret": process.env.CONSUMER_SECRET,
+      "access_token_key": process.env.ACCESS_TOKEN_KEY,
+      "access_token_secret": process.env.ACCESS_TOKEN_SECRET
+    },
 
     //create an object using the keys we just determined
-    twitterAPI = new ntwitter(config.keys);
+    twitterAPI = new ntwitter(keys);
 
   //check if we have the rights to do anything
   twitterAPI.verifyCredentials(function (error, userdata) {
@@ -76,6 +81,10 @@
       initStreaming();
     }
   });
+
+  function contains(text, array) {
+    return array.some(function (rx) {return rx.test(text)});
+  }
 
   function errorTwitter(error) {
     LogUtils.logtrace(error, LogUtils.Colors.RED);
@@ -106,26 +115,15 @@
   function streamCallback(stream) {
     LogUtils.logtrace("streaming", LogUtils.Colors.CYAN);
 
-    String.prototype.contains = function (word) {
-      return this.indexOf(word) != -1;
-    };
-
     stream.on('data', function (data) {
+      LogUtils.logtrace("data :", data);
+
       //if it's actually there
       if (data.text !== undefined) {
 
         //a few checks to see if we should reply
-        if (data.user.screen_name.toLowerCase() != botUsername.toLowerCase() && 			//if it wasn't sent by the bot itself
-          config.blacklist.indexOf(data.user.screen_name) == -1 &&					//if the sender isn't in the blacklist
-          data.retweeted_status === undefined) {									//and if it isn't a retweet of one of our tweets
-
-          var h = config.word_blacklist;
-          for (var i = 0; i < h.length; i++) {
-            if (data.text.toLowerCase().contains(h[i].toLowerCase())) {
-              LogUtils.logtrace("A blacklist word avoided", LogUtils.Colors.RED);
-              return false;
-            }
-          }
+        if (data.user.screen_name.toLowerCase() !== botUsername.toLowerCase() && 			// if it wasn't sent by the bot itself
+          data.retweeted_status === undefined) {									                    // and if it isn't a retweet of one of our tweets
 
           LogUtils.logtrace("[" + data.id_str + "] tweet from [" + data.user.screen_name + "]", LogUtils.Colors.GREEN);
 
@@ -144,7 +142,7 @@
                 var tweetLimitCheck = statusData.user.name.match(/(\[TL\]) (.*)/);
 
                 //if we just got out of tweet limit, we need to update the bot's name
-                if (tweetLimitCheck != null) {
+                if (tweetLimitCheck !== null) {
                   //DO EET
                   twitterAPI.updateProfile({name: tweetLimitCheck[2]}, function (error, data) {
                     if (error) {
@@ -166,29 +164,15 @@
           var text = data.text.toLowerCase();
 
           if (lngDetector.detect(text, 1)[0][0] === 'french') { // Only french tweets
-            if (PROHIBITEDWORDS.small.some(function (rx) {
-                return rx.test(text)
-              }) ||
-              PROHIBITEDWORDS.medium.some(function (rx) {
-                return rx.test(text)
-              }) ||
-              PROHIBITEDWORDS.hard.some(function (rx) {
-                return rx.test(text)
-              })) { // If tweet contains 'digital'
+            if (contains(text, PROHIBITEDWORDS.small.concat(PROHIBITEDWORDS.medium).concat(PROHIBITEDWORDS.hard))) { // If tweet contains 'digital'
 
-              if (!EXCEPTIONS.some(function (rx) {
-                  return rx.test(text)
-                })) { // If tweet doesn't contain any of the excluded terms
+              if (!contains(text, EXCEPTIONS)) { // If tweet doesn't contain any of the excluded terms
 
-                if (PROHIBITEDWORDS.small.some(function (rx) {
-                    return rx.test(text)
-                  })) { // If the tweet severity is not that harmful
+                if (contains(text, PROHIBITEDWORDS.small)) { // If the tweet severity is not that harmful
                   // Let's pick a random sentence to tweet
                   result = RESPONSES.small[Math.floor(Math.random() * RESPONSES.small.length)];
                 }
-                else if (PROHIBITEDWORDS.medium.some(function (rx) {
-                    return rx.test(text)
-                  })) { // If they are brave enough to tweet that, 100% sure they'll get that
+                else if (contains(text, PROHIBITEDWORDS.medium)) { // If they are brave enough to tweet that, 100% sure they'll get that
                   result = RESPONSES.small[Math.floor(Math.random() * RESPONSES.small.length)];
                 }
                 else { // They'll learn it the hard way
@@ -210,10 +194,8 @@
                       LogUtils.logtrace("[" + statusData.in_reply_to_status_id_str + "] ->replied to [" + statusData.in_reply_to_screen_name + "]", LogUtils.Colors.GREEN);
 
                       //check if there's "[TL]" in the name of the but
-                      var tweetLimitCheck = statusData.user.name.match(/(\[TL\]) (.*)/);
-
                       //if we just got out of tweet limit, we need to update the bot's name
-                      if (tweetLimitCheck != null) {
+                      if (statusData.user.name.match(/(\[TL\]) (.*)/) !== null) {
                         //DO EET
                         twitterAPI.updateProfile({name: tweetLimitCheck[2]}, function (error, data) {
                           if (error) {
@@ -247,15 +229,13 @@
 
   function onStreamError(e) {
     //when the stream is disconnected, connect again
-    if (!e.code) e.code = "unknown";
-    LogUtils.logtrace("streaming ended (" + e.code + ")", LogUtils.Colors.RED);
+    LogUtils.logtrace("Streaming ended (" + e.code || "unknown" + ")", LogUtils.Colors.RED);
     setTimeout(initStreaming, 5000);
   }
 
   function initStreaming() {
     //initialize the stream and everything else
     var keyWords = PROHIBITEDWORDS.small.concat(PROHIBITEDWORDS.medium).concat(PROHIBITEDWORDS.hard);
-
     twitterAPI.stream('statuses/filter', {track: keyWords.join(', ')}, streamCallback);
   }
 
