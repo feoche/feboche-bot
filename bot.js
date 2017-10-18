@@ -55,16 +55,13 @@
     botUsername = null,
     hasNotifiedTL = false,
 
-    //get the config (API keys)
-    keys = {
+    //create an object using the keys we just determined
+    twitterAPI = new ntwitter({
       "consumer_key": process.env.CONSUMER_TOKEN,
       "consumer_secret": process.env.CONSUMER_SECRET,
       "access_token_key": process.env.ACCESS_TOKEN_KEY,
       "access_token_secret": process.env.ACCESS_TOKEN_SECRET
-    },
-
-    //create an object using the keys we just determined
-    twitterAPI = new ntwitter(keys);
+    });
 
   //check if we have the rights to do anything
   twitterAPI.verifyCredentials(function (error, userdata) {
