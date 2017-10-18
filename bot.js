@@ -134,8 +134,6 @@
         if (data.lang === 'fr') {
           var result = '';
 
-          console.log(data.text);
-
           var text = data.text;
           // Only french tweets
           if (containsRegExp(text, PROHIBITEDWORDS.small.concat(PROHIBITEDWORDS.medium).concat(PROHIBITEDWORDS.hard))) { // If tweet contains 'digital'
@@ -190,6 +188,8 @@
                   }
                   result = RESPONSES.small[Math.floor(Math.random() * RESPONSES.small.length)];
                 }
+
+                console.log(data.text);
                 var tweetDone = '@' + data.user.screen_name + " " + result + ' \n👉 http://www.academie-francaise.fr/digital 👈';
                 //reply to the tweet that mentionned us
                 twitterAPI.updateStatus(tweetDone.substring(0, 139), {in_reply_to_status_id: data.id_str},
