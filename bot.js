@@ -47,7 +47,7 @@
     };
 
   //the twitter api module
-  var ntwitter = require('ntwitter'),
+  var twitter = require('twitter'),
     lngDetector = new (require('languagedetect')),
     LogUtils = require('./lib/LogUtils.js'),
 
@@ -56,7 +56,7 @@
     hasNotifiedTL = false,
 
     //create an object using the keys we just determined
-    twitterAPI = new ntwitter({
+    twitterAPI = new twitter({
       "consumer_key": process.env.CONSUMER_TOKEN,
       "consumer_secret": process.env.CONSUMER_SECRET,
       "access_token_key": process.env.ACCESS_TOKEN_KEY,

@@ -4,14 +4,14 @@
   "description": "Twitter bot that listens for the word \"digital\" & replies to it w/ a specific answer. ",
   "main": "bot.js",
   "scripts": {
-    "start" : "node bot.js"
+    "start": "node bot.js"
   },
   "directories": {
     "lib": "lib"
   },
   "dependencies": {
     "languagedetect": "^1.1.1",
-    "ntwitter": "^0.5.0"
+    "twitter": "^1.7.1"
   },
   "devDependencies": {},
   "repository": {
