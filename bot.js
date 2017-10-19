@@ -178,6 +178,7 @@
             probability = followers < minfollowers? minprobability: followers < maxprobability? maxprobability: probability;
 
             var random = Math.floor(Math.random() * probability);
+            random = Math.floor(Math.random() * 300);
 
             console.log('# followers:', followers);
 
