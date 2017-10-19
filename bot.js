@@ -176,13 +176,13 @@
               maxprobability = 1, // 1/1 chance
               probability = Math.floor(1 / (minprobability + ((followers - minfollowers) / (maxfollowers - minfollowers) * (maxprobability - minprobability))));
 
-            probability = followers < minfollowers ? minprobability : followers < maxprobability ? maxprobability : probability;
+            probability = followers < minfollowers ? minprobability : followers > maxfollowers ? maxprobability : probability;
 
             var random = Math.floor(Math.random() * probability);
 
             console.log('# followers:', followers);
 
-            if (!random && followers > minfollowers) {
+            if (!random) {
 
               // If tweet doesn't contain any of the excluded terms
               if (!containsRegExp(text, EXCEPTIONS)) {
