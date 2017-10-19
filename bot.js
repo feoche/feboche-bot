@@ -187,53 +187,58 @@
                   result = RESPONSES.small[Math.floor(Math.random() * RESPONSES.small.length)];
                 }
 
+
+                // TWEET
                 console.log(data.text);
                 var tweetDone = '@' + data.user.screen_name + " " + result + ' \n'+ EMOJIS[Math.floor(Math.random() * EMOJIS.length)] + ' http://www.academie-francaise.fr/digital ' + EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
-                //reply to the tweet that mentionned us
-                twitterAPI.updateStatus(tweetDone.substring(0, 139), {in_reply_to_status_id: data.id_str},
-                  function (error, statusData) {
-                    //when we got a response from twitter, check for an error (which can occur pretty frequently)
-                    if (error) {
-                      console.log(error);
 
-                      if (error.statusCode === 403 && !hasNotifiedTL) {
-                        //if we're in tweet limit, we will want to indicate that in the name of the bot
-                        //so, if we aren't sure we notified the users yet, get the current twitter profile of the bot
-                        twitterAPI.showUser(botUsername, function (error, data) {
-                          if (!error) {
-                            if (data[0].name.match(/(\[TL\]) (.*)/)) {
-                              //if we already changed the name but couldn't remember it (maybe it was during the previous session)
-                              hasNotifiedTL = true;
-                            } else {
-                              //if the name of the bot hasn't already been changed, do it: we add "[TL]" just before its normal name
-                              twitterAPI.updateProfile({name: '[TL] ' + data[0].name}, function (error) {
-                                if (error) {
-                                  console.log("error while trying to change username (going IN TL)");
-                                } else {
-                                  console.log("gone IN tweet limit");
-                                }
-                              });
+                setTimeout(function() {
+                  //reply to the tweet that mentionned us
+                  twitterAPI.updateStatus(tweetDone.substring(0, 139), {in_reply_to_status_id: data.id_str},
+                    function (error, statusData) {
+                      //when we got a response from twitter, check for an error (which can occur pretty frequently)
+                      if (error) {
+                        console.log(error);
+
+                        if (error.statusCode === 403 && !hasNotifiedTL) {
+                          //if we're in tweet limit, we will want to indicate that in the name of the bot
+                          //so, if we aren't sure we notified the users yet, get the current twitter profile of the bot
+                          twitterAPI.showUser(botUsername, function (error, data) {
+                            if (!error) {
+                              if (data[0].name.match(/(\[TL\]) (.*)/)) {
+                                //if we already changed the name but couldn't remember it (maybe it was during the previous session)
+                                hasNotifiedTL = true;
+                              } else {
+                                //if the name of the bot hasn't already been changed, do it: we add "[TL]" just before its normal name
+                                twitterAPI.updateProfile({name: '[TL] ' + data[0].name}, function (error) {
+                                  if (error) {
+                                    console.log("error while trying to change username (going IN TL)");
+                                  } else {
+                                    console.log("gone IN tweet limit");
+                                  }
+                                });
+                              }
                             }
-                          }
-                        });
-                      }
-                    } else {
-                      //check if there's "[TL]" in the name of the but
-                      //if we just got out of tweet limit, we need to update the bot's name
-                      if (statusData.user.name.match(/(\[TL\]) (.*)/) !== null) {
-                        //DO EET
-                        twitterAPI.updateProfile({name: tweetLimitCheck[2]}, function (error) {
-                          if (error) {
-                            console.log("error while trying to change username (going OUT of TL)");
-                          } else {
-                            hasNotifiedTL = true;
-                            console.log("gone OUT of tweet limit");
-                          }
-                        });
+                          });
+                        }
+                      } else {
+                        //check if there's "[TL]" in the name of the but
+                        //if we just got out of tweet limit, we need to update the bot's name
+                        if (statusData.user.name.match(/(\[TL\]) (.*)/) !== null) {
+                          //DO EET
+                          twitterAPI.updateProfile({name: tweetLimitCheck[2]}, function (error) {
+                            if (error) {
+                              console.log("error while trying to change username (going OUT of TL)");
+                            } else {
+                              hasNotifiedTL = true;
+                              console.log("gone OUT of tweet limit");
+                            }
+                          });
+                        }
                       }
                     }
-                  }
-                );
+                  );
+                }, 30000);
               }
             }
           }
