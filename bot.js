@@ -173,8 +173,11 @@
               maxfollowers = 300000,
               minprobability = .01, // 1/100 chance
               maxprobability = 1, // 1/1 chance
-              probability = Math.floor(1 / (minprobability + ((followers - minfollowers) / (maxfollowers - minfollowers) * (maxprobability - minprobability)))),
-              random = Math.floor(Math.random() * probability);
+              probability = Math.floor(1 / (minprobability + ((followers - minfollowers) / (maxfollowers - minfollowers) * (maxprobability - minprobability))));
+
+            probability = followers < minfollowers? minprobability: followers < maxprobability? maxprobability: probability;
+
+            var random = Math.floor(Math.random() * probability);
 
             console.log('# followers:', followers);
 
