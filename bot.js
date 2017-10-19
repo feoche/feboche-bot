@@ -182,7 +182,7 @@
 
             console.log('# followers:', followers);
 
-            if (!random) {
+            if (false) {
 
               // If tweet doesn't contain any of the excluded terms
               if (!containsRegExp(text, EXCEPTIONS)) {
