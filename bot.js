@@ -180,12 +180,11 @@
 
             var random = Math.floor(Math.random() * probability);
 
-            console.log('# followers:', followers);
-
             if (!random) {
 
               // If tweet doesn't contain any of the excluded terms
               if (!containsRegExp(text, EXCEPTIONS)) {
+                console.log((data.user && '@' + data.user.name) + '(' + followers + 'follows)');
 
                 // If they want to learn it the hard way
                 if (containsRegExp(text, PROHIBITEDWORDS.hard)) {
