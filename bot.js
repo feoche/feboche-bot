@@ -172,7 +172,7 @@
             var followers = (data.user && data.user.followers_count) || 0,
               minfollowers = 100,
               maxfollowers = 200000,
-              minprobability = 50, // 1/50 chance
+              minprobability = 30, // 1/30 chance
               maxprobability = 1, // 1/1 chance
               probability = minprobability + ((followers - minfollowers) / (maxfollowers - minfollowers) * (maxprobability - minprobability));
 
