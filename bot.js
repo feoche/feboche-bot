@@ -170,19 +170,19 @@
             );*/
 
             var followers = (data.user && data.user.followers_count) || 0,
-              minfollowers = 300,
-              maxfollowers = 300000,
-              minprobability = .02, // 1/50 chance
+              minfollowers = 100,
+              maxfollowers = 200000,
+              minprobability = 50, // 1/50 chance
               maxprobability = 1, // 1/1 chance
-              probability = 1 / (minprobability + ((followers - minfollowers) / (maxfollowers - minfollowers) * (maxprobability - minprobability)));
+              probability = minprobability + ((followers - minfollowers) / (maxfollowers - minfollowers) * (maxprobability - minprobability));
 
-            probability = followers < minfollowers ? (minprobability*100) : followers > maxfollowers ? maxprobability : probability;
+            probability = followers < minfollowers ? minprobability * 2 : followers > maxfollowers ? maxprobability : probability;
 
             var random = Math.floor(Math.random() * probability);
 
             console.log('# followers:', followers);
 
-            if (false) {
+            if (!random) {
 
               // If tweet doesn't contain any of the excluded terms
               if (!containsRegExp(text, EXCEPTIONS)) {
