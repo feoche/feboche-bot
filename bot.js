@@ -180,7 +180,7 @@
 
             var random = Math.floor(Math.random() * probability);
 
-            console.log((data.user && '@' + data.user.name) + '(' + followers + 'follows)');
+            console.log((data.user && '@' + data.user.name) + ' (' + followers + ' follows)');
 
             if (!random) {
 
