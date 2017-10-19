@@ -171,7 +171,7 @@
             var followers = (data.user && data.user.followers_count) || 0,
               minfollowers = 300,
               maxfollowers = 300000,
-              minprobability = .02, // 1/50 chance
+              minprobability = .01, // 1/100 chance
               maxprobability = 1, // 1/1 chance
               probability = Math.floor(1 / (minprobability + ((followers - minfollowers) / (maxfollowers - minfollowers) * (maxprobability - minprobability)))),
               random = Math.floor(Math.random() * probability);
