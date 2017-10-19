@@ -174,7 +174,7 @@
               maxfollowers = 300000,
               minprobability = .02, // 1/50 chance
               maxprobability = 1, // 1/1 chance
-              probability = Math.floor(1 / (minprobability + ((followers - minfollowers) / (maxfollowers - minfollowers) * (maxprobability - minprobability))));
+              probability = 1 / (minprobability + ((followers - minfollowers) / (maxfollowers - minfollowers) * (maxprobability - minprobability)));
 
             probability = followers < minfollowers ? (minprobability/10) : followers > maxfollowers ? maxprobability : probability;
 
