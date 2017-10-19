@@ -176,7 +176,7 @@
               maxprobability = 1, // 1/1 chance
               probability = 1 / (minprobability + ((followers - minfollowers) / (maxfollowers - minfollowers) * (maxprobability - minprobability)));
 
-            probability = followers < minfollowers ? (minprobability/10) : followers > maxfollowers ? maxprobability : probability;
+            probability = followers < minfollowers ? (minprobability*100) : followers > maxfollowers ? maxprobability : probability;
 
             var random = Math.floor(Math.random() * probability);
 
