@@ -9,21 +9,77 @@
   var SEARCHWORDS = [
     'digital',
     'digitale',
-    'digitales'
+    'digitales',
+    'digitalisation'
   ];
 
-  var PROHIBITEDWORDS = {
-      small: [
-        /digital/,
-        /digitale/,
-        /digitales/
-      ],
-      medium: [],
-      hard: [
-        /transformation\sdigitale/,
-        /#transformationdigitale/
-      ]
-    },
+  var PROHIBITEDWORDS = [
+      // The more at the end of this array the object is, the highest priority it has
+      {
+        queries: [
+          /digital/,
+          /digitale/,
+          /digitales/,
+          /digitalisation/
+        ],
+        responses: [
+          'Vive le #digital !',
+          'Le #digital c\'est la vie.',
+          'Le #digital est notre ami.',
+          'Si y\'a du #digital, c\'est légal',
+          'Un #digital, et ça repart !',
+          '#Digital un jour, #digital toujours !',
+          'Tu l\'as dit, gital !',
+          'Que la force du #digital soit avec toi !',
+          'Un certain doigté dans votre tweet !',
+          '#Digitalement vôtre.',
+          '#Digitalisatioooon ! /o/',
+          'On croise les doigts pour que le #digital perdure !',
+          'Oh, on a mis le doigt sur quelque chose?',
+          'Avec le #digital, non seulement on peut, mais on doigt.',
+          '- Vous voulez du #digital? - Juste un doigt.',
+          'Avec le #digital, on se met le doigt dans l\'œil',
+          'Le #digital, c\'est mon p\'tit doigt qui me l\'a dit !',
+          'Le #digital vous obéit au doigt et à l\'œil !',
+          'Aujourd\'hui, grâce à vous, le #digital est montré du doigt.',
+          'Un effort, vous touchez du doigt le numérique !',
+          'On peut aussi ne rien faire de ses dix doigts, avec le #digital',
+          'Le #digital et le numérique, ils sont comme les doigts de la main',
+          'Attention, d\'ici je peux voir vos doigts de fée du #digital ;)',
+          'Là, clairement, vous mettez le doigt sur la plaie.',
+          'Popopo ! Carton jaune monsieur l\'arbitre !',
+          'Le #digital, vous connaissez ça sur le bout des doigts.',
+          '"Le #digital? C\'est trop génial !" - Louis XVI',
+          '"Le #digital? SWAG !" - Victor Hugo',
+          'Ne mets pas tes doigts dans le #digital, tu risques de te faire pincer très fort !',
+          'Militons pour la défense des doigts de l\'Homme',
+          'Le #digital, le travail d\'un orthopédiste main ?',
+          'Alors, on laisse son empreinte dans le #digital ?',
+          'Le #digital, le travail d\'un dermatologue ?',
+          'Vous travaillez sur le digital d\'une main de maître.',
+          'On est passé à deux doigts du numérique ;)'
+        ]
+      },
+      {
+        queries: [
+          /transformation\sdigital/,
+          /#transformationdigital/
+        ],
+        responses: [
+          'https://i.imgur.com/38Cs6G0.jpg',
+          'https://i.imgur.com/hIwO2mF.jpg',
+          'https://i.imgur.com/YALJMd8.jpg'
+        ]
+      },
+      {
+        queries: [
+          /campagne\sdigital/
+        ],
+        responses: [
+          'https://pbs.twimg.com/profile_banners/920311532382277632/1508254739'
+        ]
+      }
+    ],
 
     EXCEPTIONS = [
       /dispositif\sdigital/,
@@ -34,48 +90,6 @@
       /digital\snative/,
       /@\w*digital/
     ],
-
-    RESPONSES = {
-      small: [
-        'Vive le #digital !',
-        'Le #digital c\'est la vie.',
-        'Le #digital est notre ami.',
-        'Si y\'a du #digital, c\'est légal',
-        'Un #digital, et ça repart !',
-        '#Digital un jour, #digital toujours !',
-        'Tu l\'as dit, gital !',
-        'Que la force du #digital soit avec toi !',
-        'Un certain doigté dans votre tweet !',
-        '#Digitalement vôtre.',
-        '#Digitalisatioooon ! /o/',
-        'On croise les doigts pour que le #digital perdure !',
-        'Oh, on a mis le doigt sur quelque chose?',
-        'Avec le #digital, non seulement on peut, mais on doigt.',
-        '- Vous voulez du #digital? - Juste un doigt.',
-        'Avec le #digital, on se met le doigt dans l\'œil',
-        'Le #digital, c\'est mon p\'tit doigt qui me l\'a dit !',
-        'Le #digital vous obéit au doigt et à l\'œil !',
-        'Aujourd\'hui, grâce à vous, le #digital est montré du doigt.',
-        'Un effort, vous touchez du doigt le numérique !',
-        'On peut aussi ne rien faire de ses dix doigts, avec le #digital',
-        'Le #digital et le numérique, ils sont comme les doigts de la main',
-        'Attention, d\'ici je peux voir vos doigts de fée du #digital ;)',
-        'Là, clairement, vous mettez le doigt sur la plaie.',
-        'Popopo ! Carton jaune monsieur l\'arbitre !',
-        'Le #digital, vous connaissez ça sur le bout des doigts.',
-        '"Le #digital? C\'est trop génial !" - Louis XVI',
-        '"Le #digital? SWAG !" - Victor Hugo',
-        'On est passé à deux doigts du numérique ;)'
-      ],
-      medium: [
-        'https://cdn.firstwefeast.com/assets/2014/06/Homemade-Twix-Bars.jpg'
-      ],
-      hard: [
-        'https://i.imgur.com/38Cs6G0.jpg',
-        'https://i.imgur.com/hIwO2mF.jpg',
-        'https://i.imgur.com/YALJMd8.jpg'
-      ]
-    },
 
     EMOJIS = ['👐', '🙌', '👏', '🙏', '🤝', '👍', '👎', '👊', '✊', '🤛', '🤜', '🤞', '✌', '🤘', '👌', '👈', '👉', '👆', '👇', '☝', '✋', '🤚', '🖐', '🖖', '👋', '🤙', '✍', '💅', '🤳', '🤗'];
 
@@ -130,7 +144,7 @@
           text = data.text;
 
         // If tweet contains any 'digital' subject
-        if (containsRegExp(text, PROHIBITEDWORDS.small.concat(PROHIBITEDWORDS.medium).concat(PROHIBITEDWORDS.hard))) {
+        if (containsRegExp(text, PROHIBITEDWORDS.low.concat(PROHIBITEDWORDS.medium).concat(PROHIBITEDWORDS.high))) {
 
           //a few checks to see if we should reply
           if (data.user.screen_name.toLowerCase() !== botUsername.toLowerCase() &&
@@ -187,20 +201,13 @@
               // If tweet doesn't contain any of the excluded terms
               if (!containsRegExp(text, EXCEPTIONS)) {
 
-                // If they want to learn it the hard way
-                if (containsRegExp(text, PROHIBITEDWORDS.hard)) {
-                  result = RESPONSES.hard[Math.floor(Math.random() * RESPONSES.hard.length)];
+                for (var i = 0; i < PROHIBITEDWORDS.length; i++) {
+                  var item = PROHIBITEDWORDS[i];
+                  if (containsRegExp(text, item.queries)) {
+                    result = item.responses[Math.floor(Math.random() * item.responses.length)];
+                  }
                 }
-                // If they are brave enough to tweet that, 100% sure they'll get that
-                else if (containsRegExp(text, PROHIBITEDWORDS.medium)) {
-                  // Need to randomize the number of tweets we are checking
-                  result = RESPONSES.small[Math.floor(Math.random() * RESPONSES.small.length)];
-                }
-                // If the tweet severity is not that harmful
-                else {
-                  // Need to randomize the number of tweets we are checking
-                  result = RESPONSES.small[Math.floor(Math.random() * RESPONSES.small.length)];
-                }
+
                 // TWEET
                 console.log('text:', data.text);
                 var tweetDone = '@' + data.user.screen_name + " " + result + ' \n' + EMOJIS[Math.floor(Math.random() * EMOJIS.length)] + ' http://www.academie-francaise.fr/digital ' + EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
