@@ -7,14 +7,14 @@
 (function () {
 
   var SEARCHWORDS = [
-    'digital',
-    'digitale',
-    'digitales',
-    'digitalisation',
-    'digitaux'
-  ];
+      'digital',
+      'digitale',
+      'digitales',
+      'digitalisation',
+      'digitaux'
+    ],
 
-  var PROHIBITEDWORDS = [
+    PROHIBITEDWORDS = [
       // The more at the end of this array the object is, the highest priority it has
       {
         queries: [
@@ -87,7 +87,7 @@
       /empreintes?\sdigital/,
       /affichages?\sdigital/,
       /Digital/,
-      /[_.\/#]digital/,
+      /[_.\/#\-]digital/,
       /digital\snative/,
       /@\w*digital/
     ],
@@ -100,6 +100,9 @@
     //the username of the bot. not set to begin with, we'll get it when authenticating
     botUsername = null,
     hasNotifiedTL = false,
+
+    // List
+    userTweets = [],
 
     //create an object using the keys we just determined
     twitterAPI = new ntwitter({
@@ -142,9 +145,10 @@
       // If text exists & only french tweets
       if (data.text && data.lang === 'fr') {
         var result = '',
+          userName = data.user && data.user.name,
           text = data.text;
 
-        // If tweet contains any 'digital' subject
+        // If tweet contains any 'prohibited' subject
         if (containsRegExp(text, PROHIBITEDWORDS[0].queries)) {
 
           //a few checks to see if we should reply
@@ -191,13 +195,28 @@
               maxprobability = 1, // 1/1 chance
               probability = minprobability + ((followers - minfollowers) / (maxfollowers - minfollowers) * (maxprobability - minprobability));
 
-            probability = followers < minfollowers ? minprobability * 2 : followers > maxfollowers ? maxprobability : probability;
+            // Setting bounds if less than min (=1/30 chance) or more than max (=1/1 chance)
+            if(followers < minfollowers) {
+              probability =  minprobability;
+            }
+            else if(followers > maxfollowers) {
+              probability = maxprobability;
+            }
+
+            // Update the probability regarding the number of tweets
+            userTweets[userName] = (userTweets[userName] + 1) || 1;
+            probability = Math.min(probability, probability / (userTweets[userName] / 2));
+
+            console.log('@' + userName + ' (' + followers + ' follows) : 1/' + probability + ' chance');
 
             var random = Math.floor(Math.random() * probability);
 
-            console.log((data.user && '@' + data.user.name) + ' (' + followers + ' follows)');
-
             if (!random) {
+
+              // Reset number of tweets
+              if(userTweets[userName]) {
+                userTweets[userName] = 0;
+              }
 
               // If tweet doesn't contain any of the excluded terms
               if (!containsRegExp(text, EXCEPTIONS)) {
