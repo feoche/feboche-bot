@@ -18,8 +18,6 @@
       {
         queries: [
           /digital/,
-          /digitale/,
-          /digitales/,
           /digitalisation/
         ],
         responses: [
@@ -144,7 +142,7 @@
           text = data.text;
 
         // If tweet contains any 'digital' subject
-        if (containsRegExp(text, PROHIBITEDWORDS.low.concat(PROHIBITEDWORDS.medium).concat(PROHIBITEDWORDS.high))) {
+        if (containsRegExp(text, PROHIBITEDWORDS[0].queries)) {
 
           //a few checks to see if we should reply
           if (data.user.screen_name.toLowerCase() !== botUsername.toLowerCase() &&
