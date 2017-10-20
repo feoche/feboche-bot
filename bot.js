@@ -17,8 +17,7 @@
       // The more at the end of this array the object is, the highest priority it has
       {
         queries: [
-          /digital/,
-          /digitalisation/
+          /digital/
         ],
         responses: [
           'Vive le #digital !',
