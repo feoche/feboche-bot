@@ -10,14 +10,16 @@
     'digital',
     'digitale',
     'digitales',
-    'digitalisation'
+    'digitalisation',
+    'digitaux'
   ];
 
   var PROHIBITEDWORDS = [
       // The more at the end of this array the object is, the highest priority it has
       {
         queries: [
-          /digital/
+          /digital/,
+          /digitaux/
         ],
         responses: [
           'Vive le #digital !',
@@ -79,9 +81,9 @@
     ],
 
     EXCEPTIONS = [
-      /dispositif\sdigital/,
-      /empreinte\sdigital/,
-      /affichage\sdigital/,
+      /dispositifs?\sdigital/,
+      /empreintes?\sdigital/,
+      /affichages?\sdigital/,
       /Digital/,
       /[_.\/#]digital/,
       /digital\snative/,
