@@ -207,7 +207,7 @@
             userTweets[userName] = (userTweets[userName] + 1) || 1;
             probability = Math.min(probability, probability / (userTweets[userName] / 2));
 
-            console.log('@' + userName + ' (' + followers + ' follows) : \t\t\t1/' + probability.toFixed(2) + ' chance');
+            console.log('@' + userName + ' (' + followers + ' follows) : \t\t\t\t\t\t\t\t\t1/' + probability.toFixed(2) + ' chance');
 
             var random = Math.floor(Math.random() * probability);
 
