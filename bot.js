@@ -229,8 +229,11 @@
                 }
 
                 // TWEET
-                console.log('text:', data.text);
-                var tweetDone = '@' + data.user.screen_name + " " + result + ' \n' + EMOJIS[Math.floor(Math.random() * EMOJIS.length)] + ' http://www.academie-francaise.fr/digital ' + EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+                console.log('• TWEET:', data.text);
+                var response = '@' + data.user.screen_name + " " + result,
+                 tweetDone = response + ' \n' + EMOJIS[Math.floor(Math.random() * EMOJIS.length)] + ' http://www.academie-francaise.fr/digital ' + EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+                console.log('==> ', response);
+
                 setTimeout(function () {
                   //reply to the tweet that mentionned us
                   twitterAPI.updateStatus(tweetDone.substring(0, 139), {in_reply_to_status_id: data.id_str},
