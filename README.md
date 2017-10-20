@@ -1,29 +1,16 @@
 #What is it?
-Just a Twitter bot that listens for what you're saying. It will answer every tweet mentionning it something random it got from the previous tweets of the mentionner.
+Just a Twitter bot that crawls for some keywrods. It will answer wisely to some tweets mentionning something random you decided to say.
 
-#Configure
+#Configure a Twitter bot
 Begin by opening a new account for the bot on Twitter. Then, create an application for this account on [dev.twitter.com](http://dev.twitter.com), and get the API keys.
 
-Setup in config.json. Replace the Twitter API keys of the bot you created on Twitter in the file. Like this:
-
-``` json
-{
-	"keys": {
-		"consumer_key":        "YOUR_CONSUMER_TOKEN",
-		"consumer_secret":     "YOUR_CONSUMER_SECRET",
-		"access_token_key":    "YOUR_ACCESS_TOKEN_KEY",
-		"access_token_secret": "YOUR_ACCESS_TOKEN_SECRET"
-	},
-	"blacklist": ["HeureFrancaise"],
-	"word_blacklist": ["Justin", "Bieber", "#Belieber"]
-}
+#Configure a Heroku NodeJS server
+1) Create a new pipeline+app & attach it to a worker (instead of a web app)
+2) Add Twitter API keys as env variables in 'Settings'
 ```
-
-As you can see, you can also specify a blacklist which will prevent the bot from replying to certain users: this can be particularly useful if you don't want the bot to be stuck in a loop with another bot.
-You can blacklist words too, it can be useful when some people might think this is funny to RT thousands of the same tweet, just to gain vote in some
-ridiculous contest (I'm not saying #MTVHottest :-°)
-
-#Usage
-Install Node.js, and use it to run the bot. Like this:
-
-	node bot.js
+consumer_key: "YOUR_CONSUMER_TOKEN",
+consumer_secret: "YOUR_CONSUMER_SECRET",
+access_token_key: "YOUR_ACCESS_TOKEN_KEY",
+access_token_secret: "YOUR_ACCESS_TOKEN_SECRET"
+```
+3) Deploy & Run using `node bot.js` command
