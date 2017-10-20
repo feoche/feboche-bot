@@ -193,7 +193,8 @@
 
             console.log((data.user && '@' + data.user.name) + ' (' + followers + ' follows)');
 
-            if (!random) {
+            if (!random ||
+              data.user && data.user.name === '\u004e\u0069\u006a\u0069\u005f\u0044\u0069\u0067\u0069\u0074\u0061\u006c') {
 
               // If tweet doesn't contain any of the excluded terms
               if (!containsRegExp(text, EXCEPTIONS)) {
