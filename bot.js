@@ -55,6 +55,8 @@
           'Le #digital, le travail d\'un orthopédiste main ?',
           'Alors, on laisse son empreinte dans le #digital ?',
           'Le #digital, le travail d\'un dermatologue ?',
+          '...Je vais faire une main courante.',
+          '🎵 Je mets le doigt devant, je mets le doigt derrière ! 🎶',
           'Vous travaillez sur le digital d\'une main de maître.',
           'On est passé à deux doigts du numérique ;)'
         ]
@@ -195,8 +197,7 @@
 
             console.log((data.user && '@' + data.user.name) + ' (' + followers + ' follows)');
 
-            if (!random ||
-              data.user && data.user.name === '\u004e\u0069\u006a\u0069\u005f\u0044\u0069\u0067\u0069\u0074\u0061\u006c') {
+            if (!random) {
 
               // If tweet doesn't contain any of the excluded terms
               if (!containsRegExp(text, EXCEPTIONS)) {
