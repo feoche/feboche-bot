@@ -197,17 +197,17 @@
 
             // Setting bounds if less than min (=1/30 chance) or more than max (=1/1 chance)
             if(followers < minfollowers) {
-              probability =  minprobability;
+              probability = Math.max(minprobability, probability);
             }
             else if(followers > maxfollowers) {
-              probability = maxprobability;
+              probability = Math.min(maxprobability, probability);
             }
 
             // Update the probability regarding the number of tweets
             userTweets[userName] = (userTweets[userName] + 1) || 1;
             probability = Math.min(probability, probability / (userTweets[userName] / 2));
 
-            console.log('@' + userName + ' (' + followers + ' follows) : 1/' + probability + ' chance');
+            console.log('@' + userName + ' (' + followers + ' follows) : \t1/' + probability.toFixed(2) + ' chance');
 
             var random = Math.floor(Math.random() * probability);
 
