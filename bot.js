@@ -40,7 +40,7 @@
           'Avec le #digital, on se met le doigt dans l\'œil',
           'Le #digital, c\'est mon p\'tit doigt qui me l\'a dit !',
           'Le #digital vous obéit au doigt et à l\'œil !',
-          'Aujourd\'hui, grâce à vous, le #digital est montré du doigt.',
+          'Grâce à vous, le #digital est montré du doigt.',
           'Un effort, vous touchez du doigt le numérique !',
           'On peut aussi ne rien faire de ses dix doigts, avec le #digital',
           'Le #digital et le numérique, ils sont comme les doigts de la main',
@@ -57,7 +57,9 @@
           'Le #digital, le travail d\'un dermatologue ?',
           '...Je vais faire une main courante.',
           '🎵 Je mets le doigt devant, je mets le doigt derrière ! 🎶',
+          '🎵 Qui a le doiiiigt d\'faire ça? 🎶',
           'Vous travaillez sur le digital d\'une main de maître.',
+          '#balancetondoigt',
           'On est passé à deux doigts du numérique ;)'
         ]
       },
@@ -78,6 +80,14 @@
         ],
         responses: [
           'https://pbs.twimg.com/profile_banners/920311532382277632/1508254739'
+        ]
+      },
+      {
+        queries: [
+          /fractures?\sdigitale/
+        ],
+        responses: [
+          'http://injury-fr.vsebolezni.com/injury/images/130-0.jpg'
         ]
       }
     ],
@@ -213,13 +223,13 @@
 
             if (!random) {
 
-              // Reset number of tweets
-              if(userTweets[userName]) {
-                userTweets[userName] = 0;
-              }
-
               // If tweet doesn't contain any of the excluded terms
               if (!containsRegExp(text, EXCEPTIONS)) {
+
+                // Reset number of tweets
+                if(userTweets[userName]) {
+                  userTweets[userName] = 0;
+                }
 
                 for (var i = 0; i < PROHIBITEDWORDS.length; i++) {
                   var item = PROHIBITEDWORDS[i];
