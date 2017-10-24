@@ -93,11 +93,12 @@
     ],
 
     EXCEPTIONS = [
+      /Digital/,
+      /[_.\/#\-]digital/,
       /dispositifs?\sdigital/,
       /empreintes?\sdigital/,
       /affichages?\sdigital/,
-      /Digital/,
-      /[_.\/#\-]digital/,
+      /digital\sdash/,
       /digital\snative/,
       /@\w*digital/
     ],
