@@ -106,7 +106,7 @@
     EMOJIS = ['👐', '🙌', '👏', '🙏', '🤝', '👍', '👎', '👊', '✊', '🤛', '🤜', '🤞', '✌', '🤘', '👌', '👈', '👉', '👆', '👇', '☝', '✋', '🤚', '🖐', '🖖', '👋', '🤙', '✍', '💅', '🤳', '🤗'];
 
   //the twitter api module
-  var ntwitter = require('ntwitter'),
+  var ntwitter = require('./lib/ntwitter'),
 
     //the username of the bot. not set to begin with, we'll get it when authenticating
     botUsername = null,
