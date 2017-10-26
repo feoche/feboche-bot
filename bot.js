@@ -94,7 +94,7 @@
 
     EXCEPTIONS = [
       /Digital/,
-      /[_.\/#\-]digital/,
+      /[_.\/#\-"]digital/,
       /dispositifs?\sdigital/,
       /empreintes?\sdigital/,
       /affichages?\sdigital/,
@@ -206,6 +206,10 @@
               maxprobability = 1, // 1/1 chance
               probability = minprobability + ((followers - minfollowers) / (maxfollowers - minfollowers) * (maxprobability - minprobability));
 
+            // Update the probability regarding the number of tweets
+            userTweets[userName] = (userTweets[userName] + 1) || 1;
+            probability = Math.min(probability, probability / (userTweets[userName] / 2));
+
             // Setting bounds if less than min (=1/30 chance) or more than max (=1/1 chance)
             if(followers < minfollowers) {
               probability = Math.max(minprobability, probability);
@@ -213,10 +217,6 @@
             else if(followers > maxfollowers) {
               probability = Math.min(maxprobability, probability);
             }
-
-            // Update the probability regarding the number of tweets
-            userTweets[userName] = (userTweets[userName] + 1) || 1;
-            probability = Math.min(probability, probability / (userTweets[userName] / 2));
 
             console.log('@' + userName + ' (' + followers + ' follows - 1/' + probability.toFixed(2) + ' chance)');
 
