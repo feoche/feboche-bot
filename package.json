@@ -4,7 +4,9 @@
   "description": "Twitter bot that listens for the word \"digital\" & replies to it w/ a specific answer. ",
   "main": "bot.js",
   "scripts": {
-    "start": "npm i && node bot.js"
+  "engines": {
+    "node": ">=8",
+    "npm": ">=5"
   },
   "dependencies": {
     "ntwitter": "0.5.0"
