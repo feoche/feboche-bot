@@ -5,8 +5,7 @@
 */
 
   //the twitter api module
-  var ntwitter = require('ntwitter');
-  //import ntwitter from 'ntwitter';
+  import ntwitter from 'ntwitter';
 
   const SEARCHWORDS = [
       'digital',
