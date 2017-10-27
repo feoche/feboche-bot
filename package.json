@@ -5,7 +5,9 @@
   "main": "bot.js",
   "scripts": {
     "prestart": "npm install",
-    "start": "node -r @std/esm bot.js"
+    "start": "node -r @std/esm bot.js",
+    "lint": "eslint bot.js",
+    "precommit": "lint"
   },
   "@std/esm": {
     "esm": "all"
@@ -18,7 +20,16 @@
     "@std/esm": "^0.12.4",
     "ntwitter": "0.5.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "eslint": "^4.9.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-node": "^5.2.1",
+    "eslint-plugin-prettier": "^2.3.1",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "prettier": "^1.7.4"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/feoche/digital-twitter-bot.git"
