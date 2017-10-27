@@ -103,7 +103,12 @@
       /@\w*digital/
     ],
 
-    EMOJIS = ['👐', '🙌', '👏', '🙏', '🤝', '👍', '👎', '👊', '✊', '🤛', '🤜', '🤞', '✌', '🤘', '👌', '👈', '👉', '👆', '👇', '☝', '✋', '🤚', '🖐', '🖖', '👋', '🤙', '✍', '💅', '🤳', '🤗'];
+    EMOJIS = ['👐', '🙌', '👏', '🙏', '🤝', '👍', '👎', '👊', '✊', '🤛', '🤜', '🤞', '✌', '🤘', '👌', '👈', '👉', '👆', '👇', '☝', '✋', '🤚', '🖐', '🖖', '👋', '🤙', '✍', '💅', '🤳', '🤗'],
+
+    MINFOLLOWERS = 100,
+    MAXFOLLOWERS = 200000,
+    MINPROBABILITY = 50, // 1/50 chance
+    MAXPROBABILITY = 1; // 1/1 chance
 
   //the twitter api module
   var ntwitter = require('ntwitter'),
@@ -200,22 +205,18 @@
             );*/
 
             var followers = (data.user && data.user.followers_count) || 0,
-              minfollowers = 100,
-              maxfollowers = 200000,
-              minprobability = 30, // 1/30 chance
-              maxprobability = 1, // 1/1 chance
-              probability = minprobability + ((followers - minfollowers) / (maxfollowers - minfollowers) * (maxprobability - minprobability));
+              probability = MINPROBABILITY + ((followers - MINFOLLOWERS) / (MAXFOLLOWERS - MINFOLLOWERS) * (MAXPROBABILITY - MINPROBABILITY));
 
             // Update the probability regarding the number of tweets
             userTweets[userName] = (userTweets[userName] + 1) || 1;
             probability = Math.min(probability, probability / (userTweets[userName] / 2));
 
             // Setting bounds if less than min (=1/30 chance) or more than max (=1/1 chance)
-            if(followers < minfollowers) {
-              probability = Math.max(minprobability, probability);
+            if(followers < MINFOLLOWERS) {
+              probability = Math.max(MINPROBABILITY, probability);
             }
-            else if(followers > maxfollowers) {
-              probability = Math.min(maxprobability, probability);
+            else if(followers > MAXFOLLOWERS) {
+              probability = Math.min(MAXPROBABILITY, probability);
             }
 
             console.log('@' + userName + ' (' + followers + ' follows - 1/' + probability.toFixed(2) + ' chance)');
