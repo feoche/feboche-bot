@@ -105,6 +105,8 @@
 
     EMOJIS = ['👐', '🙌', '👏', '🙏', '🤝', '👍', '👎', '👊', '✊', '🤛', '🤜', '🤞', '✌', '🤘', '👌', '👈', '👉', '👆', '👇', '☝', '✋', '🤚', '🖐', '🖖', '👋', '🤙', '✍', '💅', '🤳', '🤗'],
 
+    LINKS = ['http://www.academie-francaise.fr/digital', 'http://www.cnrtl.fr/definition/digital'],
+
     MINFOLLOWERS = 100,
     MAXFOLLOWERS = 200000,
     MINPROBABILITY = 50, // 1/50 chance
@@ -243,7 +245,7 @@
                 // TWEET
                 console.log('• TWEET:', data.text);
                 var response = '@' + data.user.screen_name + " " + result,
-                 tweetDone = response + ' \n' + EMOJIS[Math.floor(Math.random() * EMOJIS.length)] + ' http://www.academie-francaise.fr/digital ' + EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+                 tweetDone = response + ' \n' + EMOJIS[Math.floor(Math.random() * EMOJIS.length)] + ' ' + LINKS[Math.floor(Math.random() * LINKS.length)] + ' ' + EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
                 console.log('==> ', response);
 
                 setTimeout(function () {
