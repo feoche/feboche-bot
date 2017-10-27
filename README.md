@@ -1,10 +1,10 @@
-#What is it?
+# What is it?
 Just a Twitter bot that crawls for some keywrods. It will answer wisely to some tweets mentionning something random you decided to say.
 
-#Configure a Twitter bot
+# Configure a Twitter bot
 Begin by opening a new account for the bot on Twitter. Then, create an application for this account on [dev.twitter.com](http://dev.twitter.com), and get the API keys.
 
-#Configure a Heroku NodeJS server
+# Configure a Heroku NodeJS server
 1) Create a new pipeline+app & attach it to a worker (instead of a web app)
 2) Add Twitter API keys as env variables in 'Settings'
 ```
