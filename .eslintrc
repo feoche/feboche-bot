@@ -1,0 +1,16 @@
+{
+  "env": {
+    "es6": true,
+    "node": true
+  },
+  "extends": "standard",
+  "plugins": ["prettier"],
+  "rules": {
+    "semi": "off",
+    "new-cap": "warn",
+    "no-undef": "warn",
+    "prefer-template": "warn",
+    "quotes": ["error", "single", { "allowTemplateLiterals": true }],
+    "standard/computed-property-even-spacing": "off"
+  }
+}
