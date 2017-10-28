@@ -258,8 +258,7 @@ function streamCallback (stream) {
                 userTweets[userName] = 0;
               }
 
-              for (let i = 0; i < PROHIBITEDWORDS.length; i++) {
-                let item = PROHIBITEDWORDS[i];
+              for (let item of PROHIBITEDWORDS) {
                 if (containsRegExp(text, item.queries)) {
                   result = item.responses[Math.floor(Math.random() * item.responses.length)];
                 }
