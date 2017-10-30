@@ -5,6 +5,10 @@
   Modified by feoche (with YoruNoHikage agreement)
 */
 
+require('babel-register')({
+  "presets": ["es2015"]
+});
+
 // the twitter api module
 import ntwitter from 'ntwitter';
 
