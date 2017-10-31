@@ -5,8 +5,8 @@
   Modified by feoche (with YoruNoHikage agreement)
 */
 
-// the twitter api module
 import ntwitter from 'ntwitter';
+import minimist from 'minimist';
 
 const SEARCHWORDS = [
   'digital',
@@ -136,18 +136,20 @@ const MAXPROBABILITY = 1;
 
 // the username of the bot. not set to begin with, we'll get it when authenticating
 let botUsername = null;
-
 let hasNotifiedTL = false;
+
+// Retrieve args
+let args = minimist(process.argv.slice(2));
 
 // List
 let userTweets = [];
 
 // create an object using the keys we just determined
 let twitterAPI = new ntwitter({
-  consumer_key: process.env.CONSUMER_TOKEN,
-  consumer_secret: process.env.CONSUMER_SECRET,
-  access_token_key: process.env.ACCESS_TOKEN_KEY,
-  access_token_secret: process.env.ACCESS_TOKEN_SECRET
+  consumer_key: process.env.CONSUMER_TOKEN || args.ctoken,
+  consumer_secret: process.env.CONSUMER_SECRET || args.csecret,
+  access_token_key: process.env.ACCESS_TOKEN_KEY || args.akey,
+  access_token_secret: process.env.ACCESS_TOKEN_SECRET || args.asecret
 });
 
 // check if we have the rights to do anything
@@ -166,11 +168,11 @@ twitterAPI.verifyCredentials((error, userdata) => {
   }
 });
 
-function containsRegExp (text, array) {
+function containsRegExp(text, array) {
   return array.some(rx => rx.test(text));
 }
 
-function streamCallback (stream) {
+function streamCallback(stream) {
   console.log('streaming');
 
   stream.on('data', data => {
@@ -225,11 +227,16 @@ function streamCallback (stream) {
           let probability =
             MINPROBABILITY +
             (followers - MINFOLLOWERS) /
-              (MAXFOLLOWERS - MINFOLLOWERS) *
-              (MAXPROBABILITY - MINPROBABILITY);
+            (MAXFOLLOWERS - MINFOLLOWERS) *
+            (MAXPROBABILITY - MINPROBABILITY);
 
           // Update the probability regarding the number of tweets
-          userTweets[userName] = userTweets[userName] + 1 || 1;
+          if (!containsRegExp(text, EXCEPTIONS)) {
+            userTweets[userName] = userTweets[userName] + 1 || 1;
+          }
+          else {
+            userTweets[userName] = userTweets[userName] || 0;
+          }
           probability = Math.min(
             probability,
             probability / (userTweets[userName] / 2)
@@ -242,11 +249,7 @@ function streamCallback (stream) {
             probability = Math.min(MAXPROBABILITY, probability);
           }
 
-          console.log(
-            `@${userName} (${followers} follows - 1/${probability.toFixed(
-              2
-            )} chance)`
-          );
+          console.log(`@${userName} (${followers} follows - 1/${probability.toFixed(2)} chance)`);
 
           let random = Math.floor(Math.random() * probability);
 
@@ -270,67 +273,69 @@ function streamCallback (stream) {
               let tweetDone = `${response} \n${EMOJIS[Math.floor(Math.random() * EMOJIS.length)]} ${LINKS[Math.floor(Math.random() * LINKS.length)]} ${EMOJIS[Math.floor(Math.random() * EMOJIS.length)]}`;
               console.log('==> ', response);
 
-              setTimeout(() => {
-                // reply to the tweet that mentionned us
-                twitterAPI.updateStatus(
-                  tweetDone.substring(0, 139),
-                  { in_reply_to_status_id: data.id_str },
-                  (error, statusData) => {
-                    // when we got a response from twitter, check for an error (which can occur pretty frequently)
-                    if (error) {
-                      console.log(error);
-                      if (error.statusCode === 403 && !hasNotifiedTL) {
-                        // if we're in tweet limit, we will want to indicate that in the name of the bot
-                        // so, if we aren't sure we notified the users yet, get the current twitter profile of the bot
-                        twitterAPI.showUser(botUsername, (error, data) => {
-                          if (!error) {
-                            if (data[0].name.match(/(\[TL\]) (.*)/)) {
-                              // if we already changed the name but couldn't remember it (maybe it was during the previous session)
-                              hasNotifiedTL = true;
-                            } else {
-                              // if the name of the bot hasn't already been changed, do it: we add "[TL]" just before its normal name
-                              twitterAPI.updateProfile(
-                                { name: `[TL] ${data[0].name}` },
-                                error => {
-                                  if (error) {
-                                    console.log(
-                                      'error while trying to change username (going IN TL)'
-                                    );
-                                  } else {
-                                    console.log('gone IN tweet limit');
+              if (!args.test) {
+                setTimeout(() => {
+                  // reply to the tweet that mentionned us
+                  twitterAPI.updateStatus(
+                    tweetDone.substring(0, 139),
+                    {in_reply_to_status_id: data.id_str},
+                    (error, statusData) => {
+                      // when we got a response from twitter, check for an error (which can occur pretty frequently)
+                      if (error) {
+                        console.log(error);
+                        if (error.statusCode === 403 && !hasNotifiedTL) {
+                          // if we're in tweet limit, we will want to indicate that in the name of the bot
+                          // so, if we aren't sure we notified the users yet, get the current twitter profile of the bot
+                          twitterAPI.showUser(botUsername, (error, data) => {
+                            if (!error) {
+                              if (data[0].name.match(/(\[TL\]) (.*)/)) {
+                                // if we already changed the name but couldn't remember it (maybe it was during the previous session)
+                                hasNotifiedTL = true;
+                              } else {
+                                // if the name of the bot hasn't already been changed, do it: we add "[TL]" just before its normal name
+                                twitterAPI.updateProfile(
+                                  {name: `[TL] ${data[0].name}`},
+                                  error => {
+                                    if (error) {
+                                      console.log(
+                                        'error while trying to change username (going IN TL)'
+                                      );
+                                    } else {
+                                      console.log('gone IN tweet limit');
+                                    }
                                   }
-                                }
-                              );
+                                );
+                              }
                             }
-                          }
-                        });
-                      }
-                    } else {
-                      // check if there's "[TL]" in the name of the but
-                      // if we just got out of tweet limit, we need to update the bot's name
-                      if (
-                        statusData.user.name.match(/(\[TL\]) (.*)/) !== null
-                      ) {
-                        // DO EET
-                        // FIXME tweetLimitCheck is undefined
-                        twitterAPI.updateProfile(
-                          { name: tweetLimitCheck[2] },
-                          error => {
-                            if (error) {
-                              console.log(
-                                'error while trying to change username (going OUT of TL)'
-                              );
-                            } else {
-                              hasNotifiedTL = true;
-                              console.log('gone OUT of tweet limit');
+                          });
+                        }
+                      } else {
+                        // check if there's "[TL]" in the name of the but
+                        // if we just got out of tweet limit, we need to update the bot's name
+                        if (
+                          statusData.user.name.match(/(\[TL\]) (.*)/) !== null
+                        ) {
+                          // DO EET
+                          // FIXME tweetLimitCheck is undefined
+                          twitterAPI.updateProfile(
+                            {name: tweetLimitCheck[2]},
+                            error => {
+                              if (error) {
+                                console.log(
+                                  'error while trying to change username (going OUT of TL)'
+                                );
+                              } else {
+                                hasNotifiedTL = true;
+                                console.log('gone OUT of tweet limit');
+                              }
                             }
-                          }
-                        );
+                          );
+                        }
                       }
                     }
-                  }
-                );
-              }, 30000);
+                  );
+                }, 30000);
+              }
             }
           }
         }
@@ -344,17 +349,17 @@ function streamCallback (stream) {
   setTimeout(stream.destroy, 1000 * 60 * 30);
 }
 
-function onStreamError (e) {
+function onStreamError(e) {
   // when the stream is disconnected, connect again
   console.log(`Streaming ended (${e.code}` || 'unknown' + ')');
   setTimeout(initStreaming, 5000);
 }
 
-function initStreaming () {
+function initStreaming() {
   // initialize the stream and everything else
   twitterAPI.stream(
     'statuses/filter',
-    { track: SEARCHWORDS.join(',') },
+    {track: SEARCHWORDS.join(',')},
     streamCallback
   );
 }
