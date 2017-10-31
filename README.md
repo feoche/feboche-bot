@@ -1,5 +1,5 @@
 # What is it?
-Just a Twitter bot that crawls for some keywrods. It will answer wisely to some tweets mentionning something random you decided to say.
+Just a Twitter bot that crawls for some keywords. It will answer wisely to some tweets mentionning something random you decided to say.
 
 # Configure a Twitter bot
 Begin by opening a new account for the bot on Twitter. Then, create an application for this account on [dev.twitter.com](http://dev.twitter.com), and get the API keys.
