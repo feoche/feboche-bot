@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@std/esm": "^0.12.4",
+    "minimist": "^1.2.0",
     "ntwitter": "0.5.0"
   },
   "devDependencies": {
