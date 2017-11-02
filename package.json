@@ -4,6 +4,7 @@
   "description": "Twitter bot that listens for the word \"digital\" & replies to it w/ a specific answer.",
   "main": "bot.js",
   "scripts": {
+    "prestart": "npm install",
     "start": "node -r @std/esm bot.js",
     "lint": "eslint bot.js",
     "precommit": "lint"
