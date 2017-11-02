@@ -5,8 +5,8 @@
   Modified by feoche (with YoruNoHikage agreement)
 */
 
-import ntwitter from 'ntwitter';
-import minimist from 'minimist';
+import ntwitter from 'ntwitter'
+import minimist from 'minimist'
 
 const SEARCHWORDS = [
   'digital',
@@ -14,7 +14,7 @@ const SEARCHWORDS = [
   'digitales',
   'digitalisation',
   'digitaux'
-];
+]
 
 const PROHIBITEDWORDS = [
   // The more at the end of this array the object is, the highest priority it has
@@ -80,7 +80,7 @@ const PROHIBITEDWORDS = [
     queries: [/fractures?\sdigitale/],
     responses: ['http://injury-fr.vsebolezni.com/injury/images/130-0.jpg']
   }
-];
+]
 
 const EXCEPTIONS = [
   /Digital/,
@@ -91,7 +91,7 @@ const EXCEPTIONS = [
   /digital\sdash/,
   /digital\snative/,
   /@\w*digital/
-];
+]
 
 const EMOJIS = [
   '👐',
@@ -124,25 +124,25 @@ const EMOJIS = [
   '💅',
   '🤳',
   '🤗'
-];
+]
 const LINKS = [
   'http://www.academie-francaise.fr/digital',
   'http://www.cnrtl.fr/definition/digital'
-];
-const MINFOLLOWERS = 100;
-const MAXFOLLOWERS = 200000;
-const MINPROBABILITY = 50;
-const MAXPROBABILITY = 1;
+]
+const MINFOLLOWERS = 100
+const MAXFOLLOWERS = 200000
+const MINPROBABILITY = 50
+const MAXPROBABILITY = 1
 
 // the username of the bot. not set to begin with, we'll get it when authenticating
-let botUsername = null;
-let hasNotifiedTL = false;
+let botUsername = null
+let hasNotifiedTL = false
 
 // Retrieve args
-let args = minimist(process.argv.slice(2));
+let args = minimist(process.argv.slice(2))
 
 // List
-let userTweets = [];
+let userTweets = []
 
 // create an object using the keys we just determined
 let twitterAPI = new ntwitter({
@@ -150,37 +150,37 @@ let twitterAPI = new ntwitter({
   consumer_secret: process.env.CONSUMER_SECRET || args.csecret,
   access_token_key: process.env.ACCESS_TOKEN_KEY || args.akey,
   access_token_secret: process.env.ACCESS_TOKEN_SECRET || args.asecret
-});
+})
 
 // check if we have the rights to do anything
 twitterAPI.verifyCredentials((error, userdata) => {
   if (error) {
     // if we don't, we'd better stop here anyway
-    console.log(error);
-    process.exit(1);
+    console.log(error)
+    process.exit(1)
   } else {
     // the credentials check returns the username, so we can store it here
-    botUsername = userdata.screen_name;
-    console.log(`logged in as [${userdata.screen_name}]`);
+    botUsername = userdata.screen_name
+    console.log(`logged in as [${userdata.screen_name}]`)
 
     // start listening to tweets that contain the bot's username using the streaming api
-    initStreaming();
+    initStreaming()
   }
-});
+})
 
-function containsRegExp(text, array) {
-  return array.some(rx => rx.test(text));
+function containsRegExp (text, array) {
+  return array.some(rx => rx.test(text))
 }
 
-function streamCallback(stream) {
-  console.log('streaming');
+function streamCallback (stream) {
+  console.log('streaming')
 
   stream.on('data', data => {
     // If text exists & only french tweets
     if (data.text && data.lang === 'fr') {
-      let result = '';
-      let userName = data.user && data.user.name;
-      let text = data.text;
+      let result = ''
+      let userName = data.user && data.user.name
+      let text = data.text
 
       // If tweet contains any 'prohibited' subject
       if (containsRegExp(text, PROHIBITEDWORDS[0].queries)) {
@@ -222,56 +222,55 @@ function streamCallback(stream) {
               }
             ); */
 
-          let followers = (data.user && data.user.followers_count) || 0;
+          let followers = (data.user && data.user.followers_count) || 0
 
           let probability =
             MINPROBABILITY +
             (followers - MINFOLLOWERS) /
             (MAXFOLLOWERS - MINFOLLOWERS) *
-            (MAXPROBABILITY - MINPROBABILITY);
+            (MAXPROBABILITY - MINPROBABILITY)
 
           // Update the probability regarding the number of tweets
           if (!containsRegExp(text, EXCEPTIONS)) {
-            userTweets[userName] = userTweets[userName] + 1 || 1;
-          }
-          else {
-            userTweets[userName] = userTweets[userName] || 0;
+            userTweets[userName] = userTweets[userName] + 1 || 1
+          } else {
+            userTweets[userName] = userTweets[userName] || 0
           }
           probability = Math.min(
             probability,
             probability / (userTweets[userName] / 2)
-          );
+          )
 
           // Setting bounds if less than min (=1/30 chance) or more than max (=1/1 chance)
           if (followers < MINFOLLOWERS) {
-            probability = Math.max(MINPROBABILITY, probability);
+            probability = Math.max(MINPROBABILITY, probability)
           } else if (followers > MAXFOLLOWERS) {
-            probability = Math.min(MAXPROBABILITY, probability);
+            probability = Math.min(MAXPROBABILITY, probability)
           }
 
-          console.log(`@${userName} (${followers} follows - 1/${probability.toFixed(2)} chance)`);
+          console.log(`@${userName} (${followers} follows - 1/${probability.toFixed(2)} chance)`)
 
-          let random = Math.floor(Math.random() * probability);
+          let random = Math.floor(Math.random() * probability)
 
           if (!random) {
             // If tweet doesn't contain any of the excluded terms
             if (!containsRegExp(text, EXCEPTIONS)) {
               // Reset number of tweets
               if (userTweets[userName]) {
-                userTweets[userName] = 0;
+                userTweets[userName] = 0
               }
 
               for (let item of PROHIBITEDWORDS) {
                 if (containsRegExp(text, item.queries)) {
-                  result = item.responses[Math.floor(Math.random() * item.responses.length)];
+                  result = item.responses[Math.floor(Math.random() * item.responses.length)]
                 }
               }
 
               // TWEET
-              console.log('• TWEET:', data.text);
-              let response = `@${data.user.screen_name} ${result}`;
-              let tweetDone = `${response} \n${EMOJIS[Math.floor(Math.random() * EMOJIS.length)]} ${LINKS[Math.floor(Math.random() * LINKS.length)]} ${EMOJIS[Math.floor(Math.random() * EMOJIS.length)]}`;
-              console.log('==> ', response);
+              console.log('• TWEET:', data.text)
+              let response = `@${data.user.screen_name} ${result}`
+              let tweetDone = `${response} \n${EMOJIS[Math.floor(Math.random() * EMOJIS.length)]} ${LINKS[Math.floor(Math.random() * LINKS.length)]} ${EMOJIS[Math.floor(Math.random() * EMOJIS.length)]}`
+              console.log('==> ', response)
 
               if (!args.test) {
                 setTimeout(() => {
@@ -282,7 +281,7 @@ function streamCallback(stream) {
                     (error, statusData) => {
                       // when we got a response from twitter, check for an error (which can occur pretty frequently)
                       if (error) {
-                        console.log(error);
+                        console.log(error)
                         if (error.statusCode === 403 && !hasNotifiedTL) {
                           // if we're in tweet limit, we will want to indicate that in the name of the bot
                           // so, if we aren't sure we notified the users yet, get the current twitter profile of the bot
@@ -290,7 +289,7 @@ function streamCallback(stream) {
                             if (!error) {
                               if (data[0].name.match(/(\[TL\]) (.*)/)) {
                                 // if we already changed the name but couldn't remember it (maybe it was during the previous session)
-                                hasNotifiedTL = true;
+                                hasNotifiedTL = true
                               } else {
                                 // if the name of the bot hasn't already been changed, do it: we add "[TL]" just before its normal name
                                 twitterAPI.updateProfile(
@@ -299,15 +298,15 @@ function streamCallback(stream) {
                                     if (error) {
                                       console.log(
                                         'error while trying to change username (going IN TL)'
-                                      );
+                                      )
                                     } else {
-                                      console.log('gone IN tweet limit');
+                                      console.log('gone IN tweet limit')
                                     }
                                   }
-                                );
+                                )
                               }
                             }
-                          });
+                          })
                         }
                       } else {
                         // check if there's "[TL]" in the name of the but
@@ -323,43 +322,43 @@ function streamCallback(stream) {
                               if (error) {
                                 console.log(
                                   'error while trying to change username (going OUT of TL)'
-                                );
+                                )
                               } else {
-                                hasNotifiedTL = true;
-                                console.log('gone OUT of tweet limit');
+                                hasNotifiedTL = true
+                                console.log('gone OUT of tweet limit')
                               }
                             }
-                          );
+                          )
                         }
                       }
                     }
-                  );
-                }, 30000);
+                  )
+                }, 30000)
               }
             }
           }
         }
       }
     }
-  });
+  })
   // if something happens, call the onStreamError function
-  stream.on('end', onStreamError);
-  stream.on('error', onStreamError);
+  stream.on('end', onStreamError)
+  stream.on('error', onStreamError)
   // automatically disconnect every 30 minutes (more or less) to reset the stream
-  setTimeout(stream.destroy, 1000 * 60 * 30);
+  setTimeout(stream.destroy, 1000 * 60 * 30)
 }
 
-function onStreamError(e) {
+function onStreamError (e) {
   // when the stream is disconnected, connect again
-  console.log(`Streaming ended (${e.code}` || 'unknown' + ')');
-  setTimeout(initStreaming, 5000);
+  console.log(`Streaming ended (${e.code}` || 'unknown' + ')')
+  setTimeout(initStreaming, 5000)
 }
 
-function initStreaming() {
+function initStreaming () {
   // initialize the stream and everything else
   twitterAPI.stream(
     'statuses/filter',
     {track: SEARCHWORDS.join(',')},
     streamCallback
-  );
+  )
 }
