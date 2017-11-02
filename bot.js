@@ -19,7 +19,7 @@ const SEARCHWORDS = [
 const PROHIBITEDWORDS = [
   // The more at the end of this array the object is, the highest priority it has
   {
-    queries: [/digital/, /digitaux/],
+    queries: [/digita(l|ux)/],
     responses: [
       'Vive le #digital !',
       'Le #digital c\'est la vie.',
@@ -63,7 +63,7 @@ const PROHIBITEDWORDS = [
     ]
   },
   {
-    queries: [/transformation\sdigital/, /#transformationdigital/],
+    queries: [/#?transformation\s?digital/],
     responses: [
       'https://i.imgur.com/38Cs6G0.jpg',
       'https://i.imgur.com/hIwO2mF.jpg',
@@ -71,7 +71,7 @@ const PROHIBITEDWORDS = [
     ]
   },
   {
-    queries: [/campagne\sdigital/],
+    queries: [/campagne\s?digital/],
     responses: [
       'https://pbs.twimg.com/profile_banners/920311532382277632/1508254739'
     ]
@@ -82,49 +82,21 @@ const PROHIBITEDWORDS = [
   }
 ]
 
-const EXCEPTIONS = [
-  /Digital/,
-  /[_./#\-"]digital/,
-  /dispositifs?\sdigital/,
-  /empreintes?\sdigital/,
-  /affichages?\sdigital/,
-  /digital\sdash/,
-  /digital\snative/,
-  /@\w*digital/
-]
+const EXCEPTIONS = [/(?:(?:dispositif|empreinte|affichage)s?\s|num[ée]rique.*?|[_./#\-"]|@.*?|\spas\s)([dD]igita(?:l|ux))|([dD]igita(?:l|ux))\s(?:(?:dash|native)|.*?numérique)|Digital/]
+// EXCEPTIONS contains these exceptions: (more readable)
+//   /Digital/,
+//   /[_./#\-"]digital/,
+//   /dispositifs?\sdigital/,
+//   /empreintes?\sdigital/,
+//   /affichages?\sdigital/,
+//   /numérique.*?digital/,
+//   /digital.*?numérique/,
+//   /\spas\sdigital/,
+//   /digital\sdash/,
+//   /digital\snative/,
+//   /@\w*digital/
 
-const EMOJIS = [
-  '👐',
-  '🙌',
-  '👏',
-  '🙏',
-  '🤝',
-  '👍',
-  '👎',
-  '👊',
-  '✊',
-  '🤛',
-  '🤜',
-  '🤞',
-  '✌',
-  '🤘',
-  '👌',
-  '👈',
-  '👉',
-  '👆',
-  '👇',
-  '☝',
-  '✋',
-  '🤚',
-  '🖐',
-  '🖖',
-  '👋',
-  '🤙',
-  '✍',
-  '💅',
-  '🤳',
-  '🤗'
-]
+const EMOJIS = ['👐', '🙌', '👏', '🙏', '🤝', '👍', '👎', '👊', '✊', '🤛', '🤜', '🤞', '✌', '🤘', '👌', '👈', '👉', '👆', '👇', '☝', '✋', '🤚', '🖐', '🖖', '👋', '🤙', '✍', '💅', '🤳', '🤗']
 const LINKS = [
   'http://www.academie-francaise.fr/digital',
   'http://www.cnrtl.fr/definition/digital'
