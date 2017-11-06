@@ -166,37 +166,6 @@ function streamCallback (stream) {
           // if it wasn't sent by the bot itself
           data.retweeted_status === undefined
         ) {
-          /*
-            // RETWEET
-            // and if it isn't a retweet of one of our tweets
-            console.log("[" + data.id_str + "] tweet from [" + data.user.screen_name + "]");
-            // retweet
-            console.log("Trying to retweet [" + data.id + "]");
-            twitterAPI.retweetStatus(data.id_str,
-              function (error, statusData) {
-                //when we got a response from twitter, check for an error (which can occur pretty frequently)
-                if (error) {
-                  errorTwitter(error, statusData);
-                } else {
-                  //if we could send the tweet just fine
-                  console.log("[" + statusData.retweeted_status.id_str + "] ->retweeted from [" + statusData.retweeted_status.user.screen_name + "]");
-                  //check if there's "[TL]" in the name of the but
-                  let statusData.user.name.match(/(\[TL\]) (.*)/) = statusData.user.name.match(/(\[TL\]) (.*)/);
-                  //if we just got out of tweet limit, we need to update the bot's name
-                  if (statusData.user.name.match(/(\[TL\]) (.*)/) !== null) {
-                    //DO EET
-                    twitterAPI.updateProfile({name: statusData.user.name.match(/(\[TL\]) (.*)/)[2]}, function (error, data) {
-                      if (error) {
-                        console.log("error while trying to change username (going OUT of TL)");
-                      } else {
-                        hasNotifiedTL = true;
-                        console.log("gone OUT of tweet limit");
-                      }
-                    });
-                  }
-                }
-              }
-            ); */
 
           let followers = (data.user && data.user.followers_count) || 0
 
@@ -222,7 +191,7 @@ function streamCallback (stream) {
             probability = Math.min(MAXPROBABILITY, probability)
           }
 
-          if (!containsRegExp(text, EXCEPTIONS)) {
+          /* if (!containsRegExp(text, EXCEPTIONS)) {
             // RETWEET
             twitterAPI.retweetStatus(data.id_str,
               function (error, statusData) {
@@ -249,7 +218,7 @@ function streamCallback (stream) {
                 }
               }
             );
-          }
+          } */
 
           let random = Math.floor(Math.random() * probability)
 
