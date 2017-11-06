@@ -222,21 +222,21 @@ function streamCallback (stream) {
           }
 
           if (!containsRegExp(text, EXCEPTIONS)) {
-            // Fav it
-            twitterAPI.createFavorite(data.id_str,
-              {},
+            // RETWEET
+            twitterAPI.retweetStatus(data.id_str,
               function (error, statusData) {
                 // when we got a response from twitter, check for an error (which can occur pretty frequently)
                 if (error) {
-                  console.error(error)
+                  console.error(error);
                 } else {
                   // if we could send the tweet just fine
                   console.log(`@${userName} (${followers} follows - 1/${probability.toFixed(2)} chance)`)
                   // check if there's "[TL]" in the name of the but
+                  let tweetLimitCheck = statusData.user.name.match(/(\[TL\]) (.*)/);
                   // if we just got out of tweet limit, we need to update the bot's name
-                  if (statusData.user.name.match(/(\[TL\]) (.*)/) !== null) {
+                  if (tweetLimitCheck !== null) {
                     // DO EET
-                    twitterAPI.updateProfile({name: statusData.user.name.match(/(\[TL\]) (.*)/)[2]}, function (error) {
+                    twitterAPI.updateProfile({name: tweetLimitCheck[2]}, function (error) {
                       if (error) {
                         console.log('error while trying to change username (going OUT of TL)');
                       } else {
