@@ -63,7 +63,8 @@ const PROHIBITEDWORDS = [
     ]
   },
   {
-    queries: [/#?transformation\s?digital/],
+    queries: [/#?transformation\s?digital/,
+      /[tT]ransfo\s?[dD]igi/],
     responses: [
       'https://i.imgur.com/38Cs6G0.jpg',
       'https://i.imgur.com/hIwO2mF.jpg',
