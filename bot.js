@@ -94,6 +94,7 @@ const EXCEPTIONS = [/(?:(?:dispositif|empreinte|affichage)s?\s|num[ée]rique.*?|
 //   /\spas\sdigital/,
 //   /digital\sdash/,
 //   /digital\snative/,
+//   /digital\snomad/,
 //   /@\w*digital/
 
 const EMOJIS = ['👐', '🙌', '👏', '🙏', '🤝', '👍', '👎', '👊', '✊', '🤛', '🤜', '🤞', '✌', '🤘', '👌', '👈', '👉', '👆', '👇', '☝', '✋', '🤚', '🖐', '🖖', '👋', '🤙', '✍', '💅', '🤳', '🤗']
