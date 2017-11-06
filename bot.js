@@ -82,7 +82,7 @@ const PROHIBITEDWORDS = [
   }
 ]
 
-const EXCEPTIONS = [/(?:(?:dispositif|empreinte|affichage)s?\s|num[ée]rique.*?|[_./#\-"]|@.*?|\spas\s)([dD]igita(?:l|ux))|([dD]igita(?:l|ux))\s(?:(?:dash|native)|.*?numérique)|Digital/]
+const EXCEPTIONS = [/(?:(?:dispositif|empreinte|affichage)s?\s|num[ée]rique.*?|[_./#\-"]|@.*?|\spas\s)([dD]igita(?:l|ux))|([dD]igita(?:l|ux))\s(?:(?:dash|native|nomad)|.*?numérique)|Digital/]
 // EXCEPTIONS contains these exceptions: (more readable)
 //   /Digital/,
 //   /[_./#\-"]digital/,
