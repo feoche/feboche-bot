@@ -131,7 +131,7 @@ let twitterAPI = new ntwitter({
 twitterAPI.verifyCredentials((error, userdata) => {
   if (error) {
     // if we don't, we'd better stop here anyway
-    console.log(error)
+    console.error(error)
     process.exit(1)
   } else {
     // the credentials check returns the username, so we can store it here
@@ -180,11 +180,11 @@ function streamCallback (stream) {
                   //if we could send the tweet just fine
                   console.log("[" + statusData.retweeted_status.id_str + "] ->retweeted from [" + statusData.retweeted_status.user.screen_name + "]");
                   //check if there's "[TL]" in the name of the but
-                  let tweetLimitCheck = statusData.user.name.match(/(\[TL\]) (.*)/);
+                  let statusData.user.name.match(/(\[TL\]) (.*)/) = statusData.user.name.match(/(\[TL\]) (.*)/);
                   //if we just got out of tweet limit, we need to update the bot's name
-                  if (tweetLimitCheck !== null) {
+                  if (statusData.user.name.match(/(\[TL\]) (.*)/) !== null) {
                     //DO EET
-                    twitterAPI.updateProfile({name: tweetLimitCheck[2]}, function (error, data) {
+                    twitterAPI.updateProfile({name: statusData.user.name.match(/(\[TL\]) (.*)/)[2]}, function (error, data) {
                       if (error) {
                         console.log("error while trying to change username (going OUT of TL)");
                       } else {
@@ -221,7 +221,34 @@ function streamCallback (stream) {
             probability = Math.min(MAXPROBABILITY, probability)
           }
 
-          console.log(`@${userName} (${followers} follows - 1/${probability.toFixed(2)} chance)`)
+          if (!containsRegExp(text, EXCEPTIONS)) {
+            // Fav it
+            twitterAPI.createFavorite(data.id_str,
+              {},
+              function (error, statusData) {
+                // when we got a response from twitter, check for an error (which can occur pretty frequently)
+                if (error) {
+                  console.error(error)
+                } else {
+                  // if we could send the tweet just fine
+                  console.log(`@${userName} (${followers} follows - 1/${probability.toFixed(2)} chance)`)
+                  // check if there's "[TL]" in the name of the but
+                  // if we just got out of tweet limit, we need to update the bot's name
+                  if (statusData.user.name.match(/(\[TL\]) (.*)/) !== null) {
+                    // DO EET
+                    twitterAPI.updateProfile({name: statusData.user.name.match(/(\[TL\]) (.*)/)[2]}, function (error) {
+                      if (error) {
+                        console.log('error while trying to change username (going OUT of TL)');
+                      } else {
+                        hasNotifiedTL = true;
+                        console.log('gone OUT of tweet limit');
+                      }
+                    });
+                  }
+                }
+              }
+            );
+          }
 
           let random = Math.floor(Math.random() * probability)
 
@@ -259,7 +286,7 @@ function streamCallback (stream) {
                     (error, statusData) => {
                       // when we got a response from twitter, check for an error (which can occur pretty frequently)
                       if (error) {
-                        console.log(error)
+                        console.error(error)
                         if (error.statusCode === 403 && !hasNotifiedTL) {
                           // if we're in tweet limit, we will want to indicate that in the name of the bot
                           // so, if we aren't sure we notified the users yet, get the current twitter profile of the bot
@@ -293,9 +320,8 @@ function streamCallback (stream) {
                           statusData.user.name.match(/(\[TL\]) (.*)/) !== null
                         ) {
                           // DO EET
-                          // FIXME tweetLimitCheck is undefined
                           twitterAPI.updateProfile(
-                            {name: tweetLimitCheck[2]},
+                            {name: statusData.user.name.match(/(\[TL\]) (.*)/)[2]},
                             error => {
                               if (error) {
                                 console.log(
