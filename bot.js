@@ -105,6 +105,8 @@ const MINFOLLOWERS = 100
 const MAXFOLLOWERS = 200000
 const MINPROBABILITY = 50
 const MAXPROBABILITY = 1
+const MINTWEETCOOLDOWN = 900000 // 15mins
+const MAXTWEETCOOLDOWN = 7200000 // 2hrs
 
 // the username of the bot. not set to begin with, we'll get it when authenticating
 let botUsername = null
@@ -115,6 +117,7 @@ let args = minimist(process.argv.slice(2))
 
 // List
 let userTweets = []
+let lastPostedTweet = Date.now()
 
 // create an object using the keys we just determined
 let twitterAPI = new ntwitter({
@@ -203,14 +206,12 @@ function streamCallback (stream) {
             (MAXPROBABILITY - MINPROBABILITY)
 
           // Update the probability regarding the number of tweets
-          if (!containsRegExp(text, EXCEPTIONS)) {
-            userTweets[userName] = userTweets[userName] + 1 || 1
-          } else {
-            userTweets[userName] = userTweets[userName] || 0
+          userTweets[userName] = {
+            postedTweets: (!containsRegExp(text, EXCEPTIONS) && ((userTweets[userName] && userTweets[userName].postedTweets + 1) || 1)) || 0
           }
           probability = Math.min(
             probability,
-            probability / (userTweets[userName] / 2)
+            probability / ((userTweets[userName] && userTweets[userName].postedTweets) / 2)
           )
 
           // Setting bounds if less than min (=1/30 chance) or more than max (=1/1 chance)
@@ -227,25 +228,30 @@ function streamCallback (stream) {
           if (!random) {
             // If tweet doesn't contain any of the excluded terms
             if (!containsRegExp(text, EXCEPTIONS)) {
-              // Reset number of tweets
-              if (userTweets[userName]) {
-                userTweets[userName] = 0
-              }
-
               for (let item of PROHIBITEDWORDS) {
                 if (containsRegExp(text, item.queries)) {
                   result = item.responses[Math.floor(Math.random() * item.responses.length)]
                 }
               }
 
-              // TWEET
-              console.log('• TWEET:', data.text)
-              let response = `@${data.user.screen_name} ${result}`
-              let tweetDone = `${response} \n${EMOJIS[Math.floor(Math.random() * EMOJIS.length)]} ${LINKS[Math.floor(Math.random() * LINKS.length)]} ${EMOJIS[Math.floor(Math.random() * EMOJIS.length)]}`
-              console.log('==> ', response)
-
               if (!args.test) {
+                // Log it
+                console.log('• TWEET:', data.text)
+                let response = `@${data.user.screen_name} ${result}`
+                let tweetDone = `${response} \n${EMOJIS[Math.floor(Math.random() * EMOJIS.length)]} ${LINKS[Math.floor(Math.random() * LINKS.length)]} ${EMOJIS[Math.floor(Math.random() * EMOJIS.length)]}`
+                console.log('==> ', response)
+
+                // Add cooldown between tweets
+                let tweetCooldown = Math.min(Math.max(Date.now() - lastPostedTweet, MINTWEETCOOLDOWN), MAXTWEETCOOLDOWN);
+
                 setTimeout(() => {
+                  // Reset number of tweets
+                  if (userTweets[userName]) {
+                    userTweets[userName].postedTweets = 0
+                    userTweets[userName].lastTweet = Date.now()
+                    lastPostedTweet = Date.now()
+                  }
+
                   // reply to the tweet that mentionned us
                   twitterAPI.updateStatus(
                     tweetDone.substring(0, 139),
@@ -305,7 +311,7 @@ function streamCallback (stream) {
                       }
                     }
                   )
-                }, 30000)
+                }, tweetCooldown)
               }
             }
           }
