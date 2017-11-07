@@ -83,7 +83,7 @@ const PROHIBITEDWORDS = [
   }
 ]
 
-const EXCEPTIONS = [/(?:(?:dispositif|empreinte|affichage)s?\s|num[ée]rique.*?|[_./#\-"]|@.*?|\spas\s)([dD]igita(?:l|ux))|([dD]igita(?:l|ux))\s(?:(?:dash|native|nomad)|.*?numérique)|Digital/]
+const EXCEPTIONS = [/(?:(?:dispositif|empreinte|affichage)s?\s|num[ée]rique.*?|[_./#\-"]|@.*?|\spas\s)([dD]igita(?:l|ux))|([dD]igita(?:l|ux))\s(?:(?:dash|native|nomad|deluxe)|.*?numérique)|Digital/]
 // EXCEPTIONS contains these exceptions: (more readable)
 //   /Digital/,
 //   /[_./#\-"]digital/,
@@ -96,6 +96,7 @@ const EXCEPTIONS = [/(?:(?:dispositif|empreinte|affichage)s?\s|num[ée]rique.*?|
 //   /digital\sdash/,
 //   /digital\snative/,
 //   /digital\snomad/,
+//   /digital\sdeluxe/,
 //   /@\w*digital/
 
 const EMOJIS = ['👐', '🙌', '👏', '🙏', '🤝', '👍', '👎', '👊', '✊', '🤛', '🤜', '🤞', '✌', '🤘', '👌', '👈', '👉', '👆', '👇', '☝', '✋', '🤚', '🖐', '🖖', '👋', '🤙', '✍', '💅', '🤳', '🤗']
