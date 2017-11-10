@@ -59,6 +59,7 @@ const PROHIBITEDWORDS = [
       '🎵 Qui a le doiiiigt d\'faire ça? 🎶',
       'Vous travaillez sur le digital d\'une main de maître.',
       '#balancetondoigt',
+      'Selon le Dr Georges Becker, 120 grammes de digitale représentent une dose mortelle',
       'On est passé à deux doigts du numérique ;)'
     ]
   },
