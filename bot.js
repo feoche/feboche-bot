@@ -78,9 +78,7 @@ const PROHIBITEDWORDS = [
   },
   {
     queries: [/campagne\s?digital/],
-    responses: [
-      'https://pbs.twimg.com/profile_banners/920311532382277632/1508254739'
-    ]
+    responses: ['https://pbs.twimg.com/profile_banners/920311532382277632/1508254739']
   },
   {
     queries: [/fractures?\sdigitale/],
@@ -173,7 +171,6 @@ function streamCallback (stream) {
           // if it wasn't sent by the bot itself
           data.retweeted_status === undefined
         ) {
-
           let followers = (data.user && data.user.followers_count) || 0
 
           let probability =
