@@ -111,8 +111,8 @@ const MINFOLLOWERS = 100
 const MAXFOLLOWERS = 200000
 const MINPROBABILITY = 50
 const MAXPROBABILITY = 1
-const MINTWEETCOOLDOWN = 900000 // 15mins
-const MAXTWEETCOOLDOWN = 7200000 // 2hrs
+const MINTWEETCOOLDOWN = 36000000 // 10hrs
+const MAXTWEETCOOLDOWN = 72000000 // 20hrs
 
 // the username of the bot. not set to begin with, we'll get it when authenticating
 let botUsername = null
