@@ -64,7 +64,8 @@ const PROHIBITEDWORDS = [
       'Restez doigts dans vos bottes.',
       '#Digital, petits monstres, tu es le champion !',
       '#DIGITAL',
-      'Ben voyons, et pourquoi pas du #marketing #digital tant qu\'à faire ?'
+      'Ben voyons, et pourquoi pas du #marketing #digital tant qu\'à faire ?',
+      'Sauf trait d\'humour, « empreinte #digitale » n\'est pas synonyme de « empreinte numérique »'
     ]
   },
   {
@@ -102,10 +103,13 @@ const EXCEPTIONS = [/(?:(?:dispositif|empreinte|affichage)s?\s|num[ée]rique.*?|
 //   /digital\sdeluxe/,
 //   /@\w*digital/
 
-const EMOJIS = ['👐', '🙌', '👏', '🙏', '🤝', '👍', '👎', '👊', '✊', '🤛', '🤜', '🤞', '✌', '🤘', '👌', '👈', '👉', '👆', '👇', '☝', '✋', '🤚', '🖐', '🖖', '👋', '🤙', '✍', '💅', '🤳', '🤗']
+const EMOJIS = '👐🙌👏🙏🤝👍👎👊✊🤛🤜🤞✌🤘👌👈👉👆👇☝✋🤚🖐🖖👋🤙✍💅🤳🤗'.split('')
 const LINKS = [
   'http://www.academie-francaise.fr/digital',
-  'http://www.cnrtl.fr/definition/digital'
+  'http://www.cnrtl.fr/definition/digital',
+  'http://toucher.rectal.digital',
+  'https://www.youtube.com/watch?v=2N7Qea39Ego',
+  'Même au Québec : http://gdt.oqlf.gouv.qc.ca/ficheOqlf.aspx?Id_Fiche=26540999'
 ]
 const MINFOLLOWERS = 100
 const MAXFOLLOWERS = 200000
