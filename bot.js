@@ -1,131 +1,13 @@
-/*
-  outa[bot] // app.js
-  Copyright (c) 2012-2013 outa[dev].
-
-  Modified by feoche (with YoruNoHikage agreement)
-*/
-
 import ntwitter from 'ntwitter'
 import minimist from 'minimist'
+import { data } from './data.js'
 
-const SEARCHWORDS = [
-  'digital',
-  'digitale',
-  'digitales',
-  'digitalisation',
-  'digitaux'
-]
-
-const PROHIBITEDWORDS = [
-  // The more at the end of this array the object is, the highest priority it has
-  {
-    queries: [/digita(l|ux)/],
-    responses: [
-      'Vive le #digital !',
-      'Le #digital c\'est la vie.',
-      'Le #digital est notre ami.',
-      'Si y\'a du #digital, c\'est légal',
-      'Un #digital, et ça repart !',
-      '#Digital un jour, #digital toujours !',
-      'Tu l\'as dit, gital !',
-      'Que la force du #digital soit avec toi !',
-      'Un certain doigté dans votre tweet !',
-      '#Digitalement vôtre.',
-      '#Digitalisatioooon ! /o/',
-      'On croise les doigts pour que le #digital perdure !',
-      'Oh, on a mis le doigt sur quelque chose?',
-      'Avec le #digital, non seulement on peut, mais on doigt.',
-      '- Vous voulez du #digital? - Juste un doigt.',
-      'Avec le #digital, on se met le doigt dans l\'œil',
-      'Le #digital, c\'est mon p\'tit doigt qui me l\'a dit !',
-      'Le #digital vous obéit au doigt et à l\'œil !',
-      'Grâce à vous, le #digital est montré du doigt.',
-      'Un effort, vous touchez du doigt le numérique !',
-      'On peut aussi ne rien faire de ses dix doigts, avec le #digital.',
-      'Le #digital et le numérique, ils sont comme les doigts de la main.',
-      'Attention, d\'ici je peux voir vos doigts de fée du #digital ;)',
-      'Là, clairement, vous mettez le doigt sur la plaie.',
-      'Popopo ! Carton jaune monsieur l\'arbitre !',
-      'Le #digital, vous connaissez ça sur le bout des doigts.',
-      '"Le #digital? C\'est trop génial !" - Louis XVI',
-      '"Le #digital? SWAG !" - Victor Hugo',
-      'Ne mets pas tes doigts dans le #digital, tu risques de te faire pincer très fort !',
-      'Militons pour la défense des doigts de l\'Homme.',
-      'Le #digital, le travail d\'un orthopédiste main ?',
-      'Alors, on laisse son empreinte dans le #digital ?',
-      'Le #digital, le travail d\'un dermatologue ?',
-      '...Je vais faire une main courante.',
-      '🎵 Je mets le doigt devant, je mets le doigt derrière ! 🎶',
-      '🎵 Qui a le doiiiigt d\'faire ça? 🎶',
-      'Vous travaillez sur le #digital d\'une main de maître.',
-      '#balancetondoigt',
-      'Selon le Dr Georges Becker, 120 grammes de #digitale représentent une dose mortelle.',
-      'On est passé à deux doigts du numérique ;)',
-      'Restez doigts dans vos bottes.',
-      '#Digital, petits monstres, tu es le champion !',
-      '#DIGITAL',
-      'Ben voyons, et pourquoi pas du #marketing #digital tant qu\'à faire ?',
-      'Sauf trait d\'humour, « empreinte #digitale » n\'est pas synonyme de « empreinte numérique »'
-    ]
-  },
-  {
-    queries: [/#?[tT]ransformation\s?[dD]igital/,
-      /[tT]ransfo\s?[dD]igi/],
-    responses: [
-      'https://i.imgur.com/38Cs6G0.jpg',
-      'https://i.imgur.com/hIwO2mF.jpg',
-      'https://i.imgur.com/YALJMd8.jpg'
-    ]
-  },
-  {
-    queries: [/campagne\s?digital/],
-    responses: ['https://pbs.twimg.com/profile_banners/920311532382277632/1508254739']
-  },
-  {
-    queries: [/fractures?\sdigitale/],
-    responses: ['http://injury-fr.vsebolezni.com/injury/images/130-0.jpg']
-  }
-]
-
-const EXCEPTIONS = [/(?:(?:dispositif|empreinte|affichage)s?\s|num[ée]rique.*?|num[ée]riser.*?|[_./#\-"]|@.*?|\spas\s)([dD]igita(?:l(?:es)?|ux|lis(?:er|ations?)?))|([dD]igita(?:l(?:es)?|ux|lis(?:er|ations?)?))\s(?:(?:dash|native|nomad|deluxe)|.*?numérique|.*?num[ée]riser)|Digital/]
-// EXCEPTIONS contains these exceptions: (more readable)
-//   /Digital/,
-//   /[_./#\-"]digital/,
-//   /dispositifs?\sdigital/,
-//   /empreintes?\sdigital/,
-//   /affichages?\sdigital/,
-//   /numérique.*?digital/,
-//   /digital.*?numérique/,
-//   /\spas\sdigital/,
-//   /digital\sdash/,
-//   /digital\snative/,
-//   /digital\snomad/,
-//   /digital\sdeluxe/,
-//   /@\w*digital/
-
-const EMOJIS = '👐🙌👏🙏🤝👍👎👊✊🤛🤜🤞✌🤘👌👈👉👆👇☝✋🤚🖐🖖👋🤙✍💅🤳🤗'.split('')
-const LINKS = [
-  'http://www.academie-francaise.fr/digital',
-  'http://www.cnrtl.fr/definition/digital',
-  'http://toucher.rectal.digital',
-  'https://www.youtube.com/watch?v=2N7Qea39Ego',
-  'Même au Québec : http://gdt.oqlf.gouv.qc.ca/ficheOqlf.aspx?Id_Fiche=26540999'
-]
-const MINFOLLOWERS = 100
-const MAXFOLLOWERS = 200000
-const MINPROBABILITY = 50
-const MAXPROBABILITY = 1
-const MINTWEETCOOLDOWN = 36000000 // 10hrs
-const MAXTWEETCOOLDOWN = 72000000 // 20hrs
+// Retrieve args
+const args = minimist(process.argv.slice(2))
 
 // the username of the bot. not set to begin with, we'll get it when authenticating
 let botUsername = null
 let hasNotifiedTL = false
-
-// Retrieve args
-let args = minimist(process.argv.slice(2))
-
-// List
 let userTweets = []
 let lastPostedTweet = Date.now()
 
@@ -137,18 +19,13 @@ let twitterAPI = new ntwitter({
   access_token_secret: process.env.ACCESS_TOKEN_SECRET || args.asecret
 })
 
-// check if we have the rights to do anything
 twitterAPI.verifyCredentials((error, userdata) => {
   if (error) {
-    // if we don't, we'd better stop here anyway
     console.error(error)
     process.exit(1)
   } else {
-    // the credentials check returns the username, so we can store it here
     botUsername = userdata.screen_name
-    console.log(`logged in as [${userdata.screen_name}]`)
-
-    // start listening to tweets that contain the bot's username using the streaming api
+    console.log(`Logged in as [${botUsername}]`)
     initStreaming()
   }
 })
@@ -158,34 +35,34 @@ function containsRegExp (text, array) {
 }
 
 function streamCallback (stream) {
-  console.log('streaming')
+  console.log(`streaming`)
 
-  stream.on('data', data => {
+  stream.on(`data`, tweet => {
     // If text exists & only french tweets
-    if (data.text && data.lang === 'fr') {
-      let result = ''
-      let userName = data.user && data.user.name
-      let text = data.text
+    if (tweet.text && tweet.lang === `fr`) {
+      let result = ``
+      let userName = tweet.user && tweet.user.name
+      let text = tweet.text
 
-      // If tweet contains any 'prohibited' subject
-      if (containsRegExp(text, PROHIBITEDWORDS[0].queries)) {
+      // If tweet contains any `prohibited` subject
+      if (containsRegExp(text, data.PROHIBITEDWORDS[0].queries)) {
         // a few checks to see if we should reply
         if (
-          data.user.screen_name.toLowerCase() !== botUsername.toLowerCase() &&
-          // if it wasn't sent by the bot itself
-          data.retweeted_status === undefined
+          tweet.user.screen_name.toLowerCase() !== botUsername.toLowerCase() &&
+          // if it wasn`t sent by the bot itself
+          tweet.retweeted_status === undefined
         ) {
-          let followers = (data.user && data.user.followers_count) || 0
+          let followers = (tweet.user && tweet.user.followers_count) || 0
 
           let probability =
-            MINPROBABILITY +
-            (followers - MINFOLLOWERS) /
-            (MAXFOLLOWERS - MINFOLLOWERS) *
-            (MAXPROBABILITY - MINPROBABILITY)
+            data.MINPROBABILITY +
+            (followers - data.MINFOLLOWERS) /
+            (data.MAXFOLLOWERS - data.MINFOLLOWERS) *
+            (data.MAXPROBABILITY - data.MINPROBABILITY)
 
           // Update the probability regarding the number of tweets
           userTweets[userName] = {
-            postedTweets: (!containsRegExp(text, EXCEPTIONS) && ((userTweets[userName] && userTweets[userName].postedTweets + 1) || 1)) || 0
+            postedTweets: (!containsRegExp(text, data.EXCEPTIONS) && ((userTweets[userName] && userTweets[userName].postedTweets + 1) || 1)) || 0
           }
           probability = Math.min(
             probability,
@@ -193,129 +70,47 @@ function streamCallback (stream) {
           )
 
           // Setting bounds if less than min (=1/30 chance) or more than max (=1/1 chance)
-          if (followers < MINFOLLOWERS) {
-            probability = Math.max(MINPROBABILITY, probability)
-          } else if (followers > MAXFOLLOWERS) {
-            probability = Math.min(MAXPROBABILITY, probability)
+          if (followers < data.MINFOLLOWERS) {
+            probability = Math.max(data.MINPROBABILITY, probability)
+          } else if (followers > data.MAXFOLLOWERS) {
+            probability = Math.min(data.MAXPROBABILITY, probability)
           }
-
-          /* if (!containsRegExp(text, EXCEPTIONS)) {
-            // RETWEET
-            twitterAPI.retweetStatus(data.id_str,
-              function (error, statusData) {
-                // when we got a response from twitter, check for an error (which can occur pretty frequently)
-                if (error) {
-                  console.error(error);
-                } else {
-                  // if we could send the tweet just fine
-                  console.log(`@${userName} (${followers} follows - 1/${probability.toFixed(2)} chance)`)
-                  // check if there's "[TL]" in the name of the but
-                  let tweetLimitCheck = statusData.user.name.match(/(\[TL\]) (.*)/);
-                  // if we just got out of tweet limit, we need to update the bot's name
-                  if (tweetLimitCheck !== null) {
-                    // DO EET
-                    twitterAPI.updateProfile({name: tweetLimitCheck[2]}, function (error) {
-                      if (error) {
-                        console.log('error while trying to change username (going OUT of TL)');
-                      } else {
-                        hasNotifiedTL = true;
-                        console.log('gone OUT of tweet limit');
-                      }
-                    });
-                  }
-                }
-              }
-            );
-          } */
 
           let random = Math.floor(Math.random() * probability)
 
           if (!random) {
-            // If tweet doesn't contain any of the excluded terms
-            if (!containsRegExp(text, EXCEPTIONS)) {
-              for (let item of PROHIBITEDWORDS) {
+            // If tweet doesn`t contain any of the excluded terms
+            if (!containsRegExp(text, data.EXCEPTIONS)) {
+              for (let item of data.PROHIBITEDWORDS) {
                 if (containsRegExp(text, item.queries)) {
                   result = item.responses[Math.floor(Math.random() * item.responses.length)]
                 }
               }
 
-              if (!args.test) {
-                // Log it
-                console.log('• TWEET:', data.text)
-                let response = `@${data.user.screen_name} ${result}`
-                let tweetDone = `${response} \n${EMOJIS[Math.floor(Math.random() * EMOJIS.length)]} ${LINKS[Math.floor(Math.random() * LINKS.length)]} ${EMOJIS[Math.floor(Math.random() * EMOJIS.length)]}`
-                console.log('==> ', response)
+              // Log it
+              console.log(`• TWEET:`, tweet.text)
+              let response = `@${tweet.user.screen_name} ${result}`
+              let tweetDone = `${response} \n${data.EMOJIS[Math.floor(Math.random() * data.EMOJIS.length)]} ${data.LINKS[Math.floor(Math.random() * data.LINKS.length)]} ${data.EMOJIS[Math.floor(Math.random() * data.EMOJIS.length)]}`
+              console.log(`==> `, response)
 
-                // Add cooldown between tweets
-                let tweetCooldown = Math.min(Math.max(Date.now() - lastPostedTweet, MINTWEETCOOLDOWN), MAXTWEETCOOLDOWN);
-
-                setTimeout(() => {
-                  // Reset number of tweets
-                  if (userTweets[userName]) {
-                    userTweets[userName].postedTweets = 0
-                    userTweets[userName].lastTweet = Date.now()
-                    lastPostedTweet = Date.now()
-                  }
-
-                  // reply to the tweet that mentionned us
-                  twitterAPI.updateStatus(
-                    tweetDone.substring(0, 139),
-                    {in_reply_to_status_id: data.id_str},
-                    (error, statusData) => {
-                      // when we got a response from twitter, check for an error (which can occur pretty frequently)
-                      if (error) {
-                        console.error(error)
-                        if (error.statusCode === 403 && !hasNotifiedTL) {
-                          // if we're in tweet limit, we will want to indicate that in the name of the bot
-                          // so, if we aren't sure we notified the users yet, get the current twitter profile of the bot
-                          twitterAPI.showUser(botUsername, (error, data) => {
-                            if (!error) {
-                              if (data[0].name.match(/(\[TL\]) (.*)/)) {
-                                // if we already changed the name but couldn't remember it (maybe it was during the previous session)
-                                hasNotifiedTL = true
-                              } else {
-                                // if the name of the bot hasn't already been changed, do it: we add "[TL]" just before its normal name
-                                twitterAPI.updateProfile(
-                                  {name: `[TL] ${data[0].name}`},
-                                  error => {
-                                    if (error) {
-                                      console.log(
-                                        'error while trying to change username (going IN TL)'
-                                      )
-                                    } else {
-                                      console.log('gone IN tweet limit')
-                                    }
-                                  }
-                                )
-                              }
-                            }
-                          })
-                        }
-                      } else {
-                        // check if there's "[TL]" in the name of the but
-                        // if we just got out of tweet limit, we need to update the bot's name
-                        if (
-                          statusData.user.name.match(/(\[TL\]) (.*)/) !== null
-                        ) {
-                          // DO EET
-                          twitterAPI.updateProfile(
-                            {name: statusData.user.name.match(/(\[TL\]) (.*)/)[2]},
-                            error => {
-                              if (error) {
-                                console.log(
-                                  'error while trying to change username (going OUT of TL)'
-                                )
-                              } else {
-                                hasNotifiedTL = true
-                                console.log('gone OUT of tweet limit')
-                              }
-                            }
-                          )
-                        }
+              if (!args.test) { // TWEET
+                twitterAPI.updateStatus(
+                  tweetDone.substring(0, data.MAXTWEETLIMIT),
+                  {in_reply_to_status_id: tweet.id_str},
+                  (error, statusData) => {
+                    // when we got a response from twitter, check for an error (which can occur pretty frequently)
+                    if (error) {
+                      console.error(error)
+                    } else {
+                      // Reset number of tweets
+                      if (userTweets[userName]) {
+                        userTweets[userName].postedTweets = 0
+                        userTweets[userName].lastTweet = Date.now()
+                        lastPostedTweet = Date.now()
                       }
                     }
-                  )
-                }, tweetCooldown)
+                  }
+                )
               }
             }
           }
@@ -324,23 +119,25 @@ function streamCallback (stream) {
     }
   })
   // if something happens, call the onStreamError function
-  stream.on('end', onStreamError)
-  stream.on('error', onStreamError)
+  stream.on(`end`, onStreamError)
+  stream.on(`error`, onStreamError)
   // automatically disconnect every 30 minutes (more or less) to reset the stream
   setTimeout(stream.destroy, 1000 * 60 * 30)
 }
 
-function onStreamError (e) {
-  // when the stream is disconnected, connect again
-  console.log(`Streaming ended (${e.code}` || 'unknown' + ')')
+function onStreamError (err, code) {
+  console.log(`Streaming ended (${code} - ${err}) - Reloading...`)
   setTimeout(initStreaming, 5000)
 }
 
 function initStreaming () {
   // initialize the stream and everything else
   twitterAPI.stream(
-    'statuses/filter',
-    {track: SEARCHWORDS.join(',')},
+    `statuses/filter`,
+    {
+      track: data.SEARCHWORDS.join(`,`),
+      language: `fr`
+    },
     streamCallback
   )
 }

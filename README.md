@@ -4,7 +4,7 @@ Just a Twitter bot that crawls for some keywords. It will answer wisely to some 
 # Configure a Twitter bot
 Begin by opening a new account for the bot on Twitter. Then, create an application for this account on [dev.twitter.com](http://dev.twitter.com), and get the API keys.
 
-# Configure a remote NodeJS server
+# Configure a Heroku NodeJS server
 1) Create a new pipeline+app & attach it to a worker (instead of a web app)
 2) Add Twitter API keys as env variables in 'Settings'
 ```
