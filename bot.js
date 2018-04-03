@@ -121,8 +121,6 @@ function streamCallback (stream) {
   // if something happens, call the onStreamError function
   stream.on(`end`, onStreamError)
   stream.on(`error`, onStreamError)
-  // automatically disconnect every 30 minutes (more or less) to reset the stream
-  setTimeout(stream.destroy, 1000 * 60 * 30)
 }
 
 function onStreamError (err, code) {
