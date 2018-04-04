@@ -1,8 +1,8 @@
 {
   "env": {
-    "ACCESS_TOKEN_KEY": "@digital-token-key",
-    "ACCESS_TOKEN_SECRET": "@digital-token-secret",
-    "CONSUMER_SECRET": "@digital-consumer-secret",
-    "CONSUMER_TOKEN": "@digital-consumer-token"
+    "ACCESS_TOKEN_KEY": "@ACCESS_TOKEN_KEY",
+    "ACCESS_TOKEN_SECRET": "@ACCESS_TOKEN_SECRET",
+    "CONSUMER_SECRET": "@CONSUMER_SECRET",
+    "CONSUMER_TOKEN": "@CONSUMER_TOKEN"
   }
 }
