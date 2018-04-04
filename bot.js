@@ -74,7 +74,7 @@ function streamCallback (stream) {
         }
 
         console.info(
-          "\x1b[36m", ("[" + tweet.name + "]").padStart(20),                             // User
+          "\x1b[36m", ("[" + tweet.user + "]").padStart(20),                             // User
           "\x1b[34m", ("[" + followers + "]").padStart(6),                             // Followers
           "\x1b[34m", ("[" + ((1 / probability) * 100).toFixed(0) + "%]").padStart(5), // Probability
           "\x1b[0m", (tweet.text.replace('\n', '')).padEnd(140)                        // Title
