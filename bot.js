@@ -41,7 +41,7 @@ function streamCallback (stream) {
     // If text exists & only french tweets
     if (tweet.text && tweet.lang === `fr`) {
       let result = ``
-      let userName = tweet.user && tweet.user.name
+      let userName = tweet.user && tweet.user.screen_name
       let text = tweet.text
 
       if (containsRegExp(text, data.PROHIBITEDWORDS[0].queries) &&                // If tweet contains any `prohibited` subject
@@ -74,7 +74,7 @@ function streamCallback (stream) {
         }
 
         console.info(
-          "\x1b[36m", ("[" + JSON.stringify(tweet.user) + "]").padStart(20),                             // User
+          "\x1b[36m", ("[" + tweet.user.screen_name + "]").padStart(20),                             // User
           "\x1b[34m", ("[" + followers + "]").padStart(6),                             // Followers
           "\x1b[34m", ("[" + ((1 / probability) * 100).toFixed(0) + "%]").padStart(5), // Probability
           "\x1b[0m", (tweet.text.replace('\n', '')).padEnd(140)                        // Title
