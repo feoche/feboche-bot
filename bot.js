@@ -74,10 +74,9 @@ function streamCallback (stream) {
         }
 
         console.info(
-          "\x1b[36m", ("[" + tweet.user.screen_name + "]").padStart(20),                             // User
-          "\x1b[34m", ("[" + followers + "]").padStart(6),                             // Followers
-          "\x1b[34m", ("[" + ((1 / probability) * 100).toFixed(0) + "%]").padStart(5), // Probability
-          "\x1b[0m", (tweet.text.replace('\n', '')).padEnd(140)                        // Title
+          "\x1b[36m", ("[" + tweet.user.screen_name + "]").padStart(15),                                   // User
+          "\x1b[34m", ("[" + followers + "f - " + ((1 / probability) * 100).toFixed(0) + "%]").padEnd(10), // Followers + Probability
+          "\x1b[0m", (tweet.text.replace('\n', '')).padEnd(140)                                            // Title
         );
 
         let random = Math.floor(Math.random() * probability)
