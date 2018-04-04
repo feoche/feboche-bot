@@ -40,13 +40,14 @@ function streamCallback (stream) {
   stream.on(`data`, tweet => {
     // If text exists & only french tweets
     if (tweet.text && tweet.lang === `fr`) {
-      console.log(`• TWEET:`, tweet.text)
       let result = ``
       let userName = tweet.user && tweet.user.name
       let text = tweet.text
 
-      // If tweet contains any `prohibited` subject
-      if (containsRegExp(text, data.PROHIBITEDWORDS[0].queries)) {
+      // If tweet contains any `prohibited` subject and is not a Retweet
+      if (containsRegExp(text, data.PROHIBITEDWORDS[0].queries) && !containsRegExp(text, [/RT\s\@/])) {
+        console.log(`• `, tweet.text)
+
         // a few checks to see if we should reply
         if (
           tweet.user.screen_name.toLowerCase() !== botUsername.toLowerCase() &&
