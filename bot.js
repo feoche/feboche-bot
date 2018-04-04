@@ -40,6 +40,7 @@ function streamCallback (stream) {
   stream.on(`data`, tweet => {
     // If text exists & only french tweets
     if (tweet.text && tweet.lang === `fr`) {
+      console.log(`• TWEET:`, tweet.text)
       let result = ``
       let userName = tweet.user && tweet.user.name
       let text = tweet.text
@@ -88,7 +89,6 @@ function streamCallback (stream) {
               }
 
               // Log it
-              console.log(`• TWEET:`, tweet.text)
               let response = `@${tweet.user.screen_name} ${result}`
               let tweetDone = `${response} \n${data.EMOJIS[Math.floor(Math.random() * data.EMOJIS.length)]} ${data.LINKS[Math.floor(Math.random() * data.LINKS.length)]} ${data.EMOJIS[Math.floor(Math.random() * data.EMOJIS.length)]}`
               console.log(`==> `, response)
