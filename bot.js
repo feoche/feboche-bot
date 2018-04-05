@@ -7,9 +7,7 @@ const args = minimist(process.argv.slice(2))
 
 // the username of the bot. not set to begin with, we'll get it when authenticating
 let botUsername = null
-let hasNotifiedTL = false
 let userTweets = []
-let lastPostedTweet = Date.now()
 
 // create an object using the keys we just determined
 let twitterAPI = new ntwitter({
@@ -45,6 +43,7 @@ function streamCallback (stream) {
       let text = tweet.text
 
       if (containsRegExp(text, data.PROHIBITEDWORDS[0].queries) &&                // If tweet contains any `prohibited` subject
+        !containsRegExp(text, data.EXCEPTIONS) &&                                 // If tweet doesn`t contain any of the excluded terms
         !containsRegExp(text, [/RT\s\@/]) &&                                      // Tweet is not a Retweet
         tweet.user.screen_name.toLowerCase() !== botUsername.toLowerCase() &&     // If user is not the bot itself
         tweet.retweeted_status === undefined                                      // If bot has not already tweeted this
@@ -73,47 +72,39 @@ function streamCallback (stream) {
           probability = Math.min(data.MAXPROBABILITY, probability)
         }
 
-        console.info(
-          "\x1b[36m", ("[" + tweet.user.screen_name + "]").padStart(15),                                   // User
-          "\x1b[34m", ("[" + followers + "f-" + ((1 / probability) * 100).toFixed(0) + "%]").padEnd(10), // Followers + Probability
-          "\x1b[0m", (tweet.text.replace('\n', '')).padEnd(140)                                            // Title
-        );
-
         let random = Math.floor(Math.random() * probability)
-
+        console.info(
+          '\x1b[36m', ('[' + tweet.user.screen_name + ']').padStart(15),                                   // User
+          '\x1b[34m', ('[' + followers + 'f-' + ((1 / probability) * 100).toFixed(0) + '%]').padEnd(10), // Followers + Probability
+          '\x1b[0m', (tweet.text.replace('\n', '')).padEnd(140)                                            // Title
+        );
         if (!random) {
-          // If tweet doesn`t contain any of the excluded terms
-          if (!containsRegExp(text, data.EXCEPTIONS)) {
-            for (let item of data.PROHIBITEDWORDS) {
-              if (containsRegExp(text, item.queries)) {
-                result = item.responses[Math.floor(Math.random() * item.responses.length)]
-              }
+          for (let item of data.PROHIBITEDWORDS) {
+            if (containsRegExp(text, item.queries)) {
+              result = item.responses[Math.floor(Math.random() * item.responses.length)]
             }
-
-            // Log it
-            let response = `@${tweet.user.screen_name} ${result}`
-            let tweetDone = `${response} \n${data.EMOJIS[Math.floor(Math.random() * data.EMOJIS.length)]} ${data.LINKS[Math.floor(Math.random() * data.LINKS.length)]} ${data.EMOJIS[Math.floor(Math.random() * data.EMOJIS.length)]}`
-            console.log(`—> `, response)
-
-            if (!args.test) { // TWEET
-              twitterAPI.updateStatus(
-                tweetDone.substring(0, data.MAXTWEETLIMIT),
-                {in_reply_to_status_id: tweet.id_str},
-                (error, statusData) => {
-                  // when we got a response from twitter, check for an error (which can occur pretty frequently)
-                  if (error) {
-                    console.error(error)
-                  } else {
-                    // Reset number of tweets
-                    if (userTweets[userName]) {
-                      userTweets[userName].postedTweets = 0
-                      userTweets[userName].lastTweet = Date.now()
-                      lastPostedTweet = Date.now()
-                    }
+          }
+          // Log it
+          let response = `@${tweet.user.screen_name} ${result}`
+          let tweetDone = `${response} \n${data.EMOJIS[Math.floor(Math.random() * data.EMOJIS.length)]} ${data.LINKS[Math.floor(Math.random() * data.LINKS.length)]} ${data.EMOJIS[Math.floor(Math.random() * data.EMOJIS.length)]}`
+          console.log(`—> `, response)
+          if (!args.test) { // TWEET
+            twitterAPI.updateStatus(
+              tweetDone.substring(0, data.MAXTWEETLIMIT),
+              {in_reply_to_status_id: tweet.id_str},
+              (error, statusData) => {
+                // when we got a response from twitter, check for an error (which can occur pretty frequently)
+                if (error) {
+                  console.error(error)
+                } else {
+                  // Reset number of tweets
+                  if (userTweets[userName]) {
+                    userTweets[userName].postedTweets = 0
+                    userTweets[userName].lastTweet = Date.now()
                   }
                 }
-              )
-            }
+              }
+            )
           }
         }
       }
