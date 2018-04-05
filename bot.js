@@ -1,4 +1,4 @@
-import ntwitter from 'ntwitter'
+import Twitter from 'twitter'
 import minimist from 'minimist'
 import {data} from './data.js'
 
@@ -11,23 +11,15 @@ let userTweets = []
 let recordedTweets = []
 
 // create an object using the keys we just determined
-let twitterAPI = new ntwitter({
+let twitterAPI = new Twitter({
   consumer_key: process.env.CONSUMER_TOKEN || args.ctoken,
   consumer_secret: process.env.CONSUMER_SECRET || args.csecret,
   access_token_key: process.env.ACCESS_TOKEN_KEY || args.akey,
   access_token_secret: process.env.ACCESS_TOKEN_SECRET || args.asecret
 })
 
-twitterAPI.verifyCredentials((error, userdata) => {
-  if (error) {
-    console.error(error)
-    process.exit(1)
-  } else {
-    botUsername = userdata.screen_name
-    console.log(`Logged in as [${botUsername}]`)
-    initStreaming()
-  }
-})
+console.log(`Logged in`)
+initStreaming()
 
 function containsRegExp (text, array) {
   return array.some(rx => rx.test(text))
@@ -90,9 +82,10 @@ function streamCallback (stream) {
           let tweetDone = `@${tweet.user.screen_name} ${result} \n${data.EMOJIS[Math.floor(Math.random() * data.EMOJIS.length)]} ${data.LINKS[Math.floor(Math.random() * data.LINKS.length)]} ${data.EMOJIS[Math.floor(Math.random() * data.EMOJIS.length)]}`
           console.log(`—> `, tweetDone.trim().replace(/(\r\n\t|\n|\r\t)/gm, ''))
           if (!args.test) { // TWEET
-            twitterAPI.updateStatus(
-              tweetDone.substring(0, data.MAXTWEETLIMIT),
-              {in_reply_to_status_id: tweet.id_str},
+            twitterAPI.post('statuses/update', {
+                status:tweetDone.substring(0, data.MAXTWEETLIMIT),
+                in_reply_to_status_id: tweet.id_str
+              },
               (error) => {
                 if (error) {
                   console.error(error)

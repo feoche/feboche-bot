@@ -18,7 +18,7 @@
   "dependencies": {
     "@std/esm": "^0.12.4",
     "minimist": "^1.2.0",
-    "ntwitter": "0.5.0"
+    "twitter": "^1.7.1"
   },
   "devDependencies": {
     "eslint": "^4.10.0",
