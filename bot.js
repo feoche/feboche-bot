@@ -82,13 +82,15 @@ function streamCallback (stream) {
           let tweetDone = `@${tweet.user.screen_name} ${result} \n${data.EMOJIS[Math.floor(Math.random() * data.EMOJIS.length)]} ${data.LINKS[Math.floor(Math.random() * data.LINKS.length)]} ${data.EMOJIS[Math.floor(Math.random() * data.EMOJIS.length)]}`
           console.log(`—> `, tweetDone.trim().replace(/(\r\n\t|\n|\r\t)/gm, ''))
           if (!args.test) { // TWEET
+            console.info('tweetDone.substring(0, data.MAXTWEETLIMIT) : ', tweetDone.substring(0, data.MAXTWEETLIMIT));
+            console.info('tweet.id_str : ', tweet.id_str);
             twitterAPI.post('statuses/update', {
                 status:tweetDone.substring(0, data.MAXTWEETLIMIT),
                 in_reply_to_status_id: tweet.id_str
               },
               (error) => {
                 if (error) {
-                  console.error(error)
+                  console.error('Error: ', error)
                 } else {
                   // Reset number of tweets
                   if (userTweets[userName]) {
