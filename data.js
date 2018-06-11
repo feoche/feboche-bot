@@ -108,7 +108,7 @@ const data = {
 
   MINFOLLOWERS : 100,
   MAXFOLLOWERS : 100000,
-  MINPROBABILITY : 50,
+  MINPROBABILITY : 100,
   MAXPROBABILITY : 1
 }
 data.MAXTWEETLIMIT = 280 - data.LINKS.sort((a, b) => b.length-a.length)[0].length
