@@ -70,7 +70,7 @@ const data = {
       ]
     },
     {
-      queries: [/campagne\s?digital/],
+      queries: [/campagnes?\s?digital/],
       responses: [`https://pbs.twimg.com/profile_banners/920311532382277632/1508254739`]
     },
     {
