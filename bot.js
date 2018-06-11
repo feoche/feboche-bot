@@ -81,9 +81,6 @@ function streamCallback (stream) {
               if (error) {
                 console.error('Error: ', error)
               } else {
-                console.info('error : ', error);
-                console.info('tweetDone.substring(0, data.MAXTWEETLIMIT) : ', tweetDone.substring(0, data.MAXTWEETLIMIT));
-                console.info('tweet.id_str : ', tweet.id_str);
                 // Reset number of tweets
                 if (userTweets[userName]) {
                   userTweets[userName].postedTweets = 0
