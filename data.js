@@ -79,7 +79,7 @@ const data = {
     }
   ],
 
-  EXCEPTIONS : [/(?:(?:dispositif|empreinte|affichage)s?\s|num[ée]rique.*?|num[ée]riser.*?|[_./#\-"]|@.*?|\spas\s)([dD]igita(?:l(?:es)?|ux|lis(?:er|ations?)?))|([dD]igita(?:l(?:es)?|ux|lis(?:er|ations?)?))\s(?:(?:dash|native|nomad|deluxe)|.*?numérique|.*?num[ée]riser)|Digital/],
+  EXCEPTIONS : [/(?:(?:dispositif|empreinte|affichage)s?\s|num[ée]rique.*?|num[ée]riser.*?|[_./#\-"]|@.*?|\spas\s)([dD]igita(?:l(?:es)?|ux|lis(?:er|ations?)?))|([dD]igita(?:l(?:es)?|ux|lis(?:er|ations?)?))\s(?:(?:dash|native|nomad|deluxe|transformation)|.*?numérique|.*?num[ée]riser)|Digital/],
   // EXCEPTIONS contains these exceptions: (more readable)
   //   /Digital/,
   //   /[_./#\-"]digital/,
@@ -93,6 +93,7 @@ const data = {
   //   /digital\snative/,
   //   /digital\snomad/,
   //   /digital\sdeluxe/,
+  //   /digital\stransformation/,
   //   /@\w*digital/
 
   EMOJIS : `👐🙌👏🙏🤝👍👎👊✊🤛🤜🤞✌🤘👌👈👉👆👇☝✋🤚🖐🖖👋🤙✍💅🤳🤗`.split(``),

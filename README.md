@@ -16,4 +16,4 @@ access_token_secret: "YOUR_ACCESS_TOKEN_SECRET"
 3) Deploy & Run using `node bot.js` command
 
 # What if I want to test it locally?
-You can launch this command locally: `npm start -- --test --ctoken <CONSUMER_TOKEN> --csecret <CONSUMER_SECRET> --akey <ACCESS_TOKEN_KEY> --asecret <ACCESS_TOKEN_SECRET>`
+You can launch this command locally: `npm start -- --test --consumer_key <CONSUMER_TOKEN> --consumer_secret <CONSUMER_SECRET> --access_token_key <ACCESS_TOKEN_KEY> --access_token_secret <ACCESS_TOKEN_SECRET>`
