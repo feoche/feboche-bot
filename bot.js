@@ -49,10 +49,10 @@ function streamCallback (stream) {
       userTweets[userName] = {postedTweets: (userTweets[userName] && userTweets[userName].postedTweets || 0) + 1}
       let probability =
         Math.max(
-          data.MINPROBABILITY +
-          (followers - data.MINFOLLOWERS) /
-          (data.MAXFOLLOWERS - data.MINFOLLOWERS) *
-          (data.MAXPROBABILITY - data.MINPROBABILITY),
+          (data.MINPROBABILITY +
+          (followers - data.MINFOLLOWERS) *
+          (data.MAXPROBABILITY - data.MINPROBABILITY)) /
+          data.MAXFOLLOWERS,
           data.MAXPROBABILITY)
 
       probability = Math.min(probability, probability / (userTweets[userName].postedTweets / 2))
