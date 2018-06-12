@@ -17,7 +17,7 @@ let twitterAPI = new Twitter({
   access_token_key: process.env.ACCESS_TOKEN_KEY || args.access_token_key,
   access_token_secret: process.env.ACCESS_TOKEN_SECRET || args.access_token_secret
 })
-let port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
+let port = process.env.OPENSHIFT_NODEJS_PORT || 8000;
 let ipadr = process.env.OPENSHIFT_NODEJS_IP || `127.0.0.1`;
 
 console.log(`Logged in`)
