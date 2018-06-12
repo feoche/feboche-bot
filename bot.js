@@ -1,12 +1,12 @@
 import Twitter from 'twitter'
 import minimist from 'minimist'
+import http from 'http'
+import io from 'socket.io'
 import {data} from './data.js'
 
 // Retrieve args
 const args = minimist(process.argv.slice(2))
 
-// the username of the bot. not set to begin with, we'll get it when authenticating
-let botUsername = null
 let userTweets = []
 let recordedTweets = []
 
@@ -17,6 +17,8 @@ let twitterAPI = new Twitter({
   access_token_key: process.env.ACCESS_TOKEN_KEY || args.access_token_key,
   access_token_secret: process.env.ACCESS_TOKEN_SECRET || args.access_token_secret
 })
+let port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
+let ipadr = process.env.OPENSHIFT_NODEJS_IP || `127.0.0.1`;
 
 console.log(`Logged in`)
 initStreaming()
@@ -39,7 +41,17 @@ function pickRand (data) {
 function streamCallback (stream) {
   console.log(`streaming`)
 
+  let socket = io.listen(http.createServer((request, response) => {
+    response.writeHead(200, {'Content-Type': 'text/plain'})
+    response.end()
+  }).listen(port, ipadr))
+  console.log(port+":"+ipadr)
+
+  socket.on('connection', () => console.log('Launchpad connected'))
+
   stream.on(`data`, tweet => {
+    let sent = false
+
     if (isAllowedTweet(tweet)) {
       let result = ``
       let userName = tweet.user && tweet.user.screen_name
@@ -49,10 +61,10 @@ function streamCallback (stream) {
       userTweets[userName] = {postedTweets: (userTweets[userName] && userTweets[userName].postedTweets || 0) + 1}
       let probability =
         Math.max(
-          (data.MINPROBABILITY +
-          (followers - data.MINFOLLOWERS) *
-          (data.MAXPROBABILITY - data.MINPROBABILITY)) /
-          data.MAXFOLLOWERS,
+          data.MINPROBABILITY +
+          (followers - data.MINFOLLOWERS) /
+          (data.MAXFOLLOWERS - data.MINFOLLOWERS) *
+          (data.MAXPROBABILITY - data.MINPROBABILITY),
           data.MAXPROBABILITY)
 
       probability = Math.min(probability, probability / (userTweets[userName].postedTweets / 2))
@@ -68,11 +80,12 @@ function streamCallback (stream) {
             result = item.responses[pickRand(item.responses.length)]
           }
         }
-        // Log it
+
+        // Log
         let tweetDone = `@${userName} ${result} \n${data.EMOJIS[pickRand(data.EMOJIS.length)]} ${data.LINKS[pickRand(data.LINKS.length)]} ${data.EMOJIS[pickRand(data.EMOJIS.length)]}`
         console.log(`—> `, tweetDone.trim().replace(/(\r\n\t|\n|\r\t)/gm, ''))
+
         if (!args.test) { // TWEET
-          debugger;
           twitterAPI.post('statuses/update', {
               status: tweetDone.substring(0, data.MAXTWEETLIMIT),
               in_reply_to_status_id: tweet.id_str
@@ -90,7 +103,20 @@ function streamCallback (stream) {
             }
           )
         }
+        socket.emit('new', {
+          severity: 1,
+          text: tweet.text,
+          url: (tweet.entities && tweet.entities.urls && tweet.entities.urls[0] && tweet.entities.urls[0].url) || tweet.text
+        })
+        sent = true
       }
+    }
+    if(!sent) {
+      socket.emit('new', {
+        severity: 0,
+        text: tweet.text,
+        url: (tweet.entities && tweet.entities.urls && tweet.entities.urls[0] && tweet.entities.urls[0].url) || tweet.text
+      })
     }
   })
   // if something happens, call the onStreamError function
@@ -100,7 +126,7 @@ function streamCallback (stream) {
 
 function onStreamError (err) {
   console.error(`Error (${err}) - Reloading...`)
-  setTimeout(initStreaming, 5000)
+  setTimeout(initStreaming, 10000)
 }
 
 function initStreaming () {
