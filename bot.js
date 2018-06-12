@@ -45,6 +45,9 @@ function streamCallback (stream) {
     response.writeHead(200, {'Content-Type': 'text/plain'})
     response.end()
   }).listen(port, ipadr))
+  socket.set('transports', [
+    'websocket'
+  ])
   console.log(port+":"+ipadr)
 
   socket.on('connection', () => console.log('Launchpad connected'))
