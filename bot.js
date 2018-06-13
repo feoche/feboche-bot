@@ -68,12 +68,12 @@ function streamCallback (stream) {
           data.MAXPROBABILITY)
 
       probability = Math.min(probability, probability / (userTweets[userName].postedTweets / 2))
-      let textLog = tweet.text.replace('\n', '').trim().replace(/(\r\n\t|\n|\r\t)/gm, '').replace(/\shttp.*/g, '')
+      let textLog = tweet.text.replace('\n', '').trim().replace(/(\r\n\t|\n|\r\t)/gm, '').replace(/\shttp.*/g, '').replace(/digital/g, '\x1b[96mdigital\x1b[0m')
       console.info(
         '\x1b[96m', ('[' + new Date().toLocaleTimeString() + ']').padStart(10),
-        '\x1b[94m', ('[@' + userName + ']').padStart(20),                                                                                                                                   // User
-        '\x1b[91m', ('[' + followers + 'f-' + ((1 / probability) * 100).toFixed(0) + '%]').padStart(15),                                                                                    // Followers + Probability
-        '\x1b[0m', textLog.padEnd(130),                                                                                                                                                     // Title
+        '\x1b[94m', ('[@' + userName + ']').padStart(20),                                                                                                                                         // User
+        '\x1b[91m', ('[' + followers + 'f-' + ((1 / probability) * 100).toFixed(0) + '%]').padStart(15),                                                                                          // Followers + Probability
+        '\x1b[0m', textLog.padEnd(125),                                                                                                                                                           // Title
         ('http://' + (tweet.entities && tweet.entities.urls && tweet.entities.urls[0] && tweet.entities.urls[0].url) || textLog.split(/http/)[textLog.split(/http/).length-1] || '').padEnd(40)   // URL
       );
 
