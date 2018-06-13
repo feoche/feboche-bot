@@ -73,8 +73,8 @@ function streamCallback (stream) {
         '\x1b[96m', ('[' + new Date().toLocaleTimeString() + ']').padStart(10),
         '\x1b[94m', ('[@' + userName + ']').padStart(20),                                                                                                                                   // User
         '\x1b[91m', ('[' + followers + 'f-' + ((1 / probability) * 100).toFixed(0) + '%]').padStart(15),                                                                                    // Followers + Probability
-        '\x1b[0m', textLog.padEnd(120),                                                                                                                                                     // Title
-        ('http://' + (tweet.entities && tweet.entities.urls && tweet.entities.urls[0] && tweet.entities.urls[0].url) || textLog.split(/http/)[textLog.split(/http/).length-1]).padEnd(40)   // URL
+        '\x1b[0m', textLog.padEnd(130),                                                                                                                                                     // Title
+        ('http://' + (tweet.entities && tweet.entities.urls && tweet.entities.urls[0] && tweet.entities.urls[0].url) || textLog.split(/http/)[textLog.split(/http/).length-1] || '').padEnd(40)   // URL
       );
 
       if (!pickRand(probability)) {
