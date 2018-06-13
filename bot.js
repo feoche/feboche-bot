@@ -1,6 +1,7 @@
 import Twitter from 'twitter'
 import minimist from 'minimist'
 import http from 'http'
+import LanguageDetect from 'languagedetect'
 import io from 'socket.io'
 import {data} from './data.js'
 
@@ -9,6 +10,8 @@ const args = minimist(process.argv.slice(2))
 
 let userTweets = []
 let recordedTweets = []
+
+let lngDetector = new LanguageDetect();
 
 // create an object using the keys we just determined
 let twitterAPI = new Twitter({
@@ -145,11 +148,12 @@ function initStreaming () {
 }
 
 function isAllowedTweet (tweet) {
-  return tweet.text &&                                                      // Tweet contains text
-    tweet.lang === `fr` &&                                                  // Tweet is in french
-    containsRegExp(tweet.text, data.PROHIBITEDWORDS[0].queries) &&          // Tweet contains `prohibited` words
-    !containsRegExp(tweet.text, data.EXCEPTIONS) &&                         // Tweet doesn`t contain any of the excluded terms
-    !containsRegExp(tweet.text, [/RT\s\@/]) &&                              // Tweet is not a Retweet
-    !recordedTweets.includes(tweet.text) &&                                 // Tweet has not been already answered
-    tweet.retweeted_status === undefined                                    // If bot has not already tweeted this
+  return tweet.text &&                                                                                                                             // Tweet contains text
+    tweet.lang === `fr` &&                                                                                                                         // Tweet is in french
+    lngDetector.detect(tweet.text) && lngDetector.detect(tweet.text)[0] && lngDetector.detect(tweet.text)[0][0] === "french" &&                    // Tweet is in french for sure
+    containsRegExp(tweet.text, data.PROHIBITEDWORDS[0].queries) &&                                                                                 // Tweet contains `prohibited` words
+    !containsRegExp(tweet.text, data.EXCEPTIONS) &&                                                                                                // Tweet doesn`t contain any of the excluded terms
+    !containsRegExp(tweet.text, [/RT\s\@/]) &&                                                                                                     // Tweet is not a Retweet
+    !recordedTweets.includes(tweet.text) &&                                                                                                        // Tweet has not been already answered
+    tweet.retweeted_status === undefined                                                                                                           // If bot has not already tweeted this
 }
