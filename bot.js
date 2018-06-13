@@ -68,10 +68,13 @@ function streamCallback (stream) {
           data.MAXPROBABILITY)
 
       probability = Math.min(probability, probability / (userTweets[userName].postedTweets / 2))
+      let textLog = tweet.text.replace('\n', '').trim().replace(/(\r\n\t|\n|\r\t)/gm, '').replace(/\shttp.*/g, '')
       console.info(
-        '\x1b[36m', ('[' + userName + ']').padStart(20),                                   // User
-        '\x1b[34m', ('[' + followers + 'f-' + ((1 / probability) * 100).toFixed(0) + '%]').padEnd(10),   // Followers + Probability
-        '\x1b[0m', (tweet.text.replace('\n', '').trim().replace(/(\r\n\t|\n|\r\t)/gm, '')).padEnd(140)   // Title
+        '\x1b[96m', ('[' + new Date().toLocaleTimeString() + ']').padStart(10),
+        '\x1b[94m', ('[@' + userName + ']').padStart(20),                                                                                                                                   // User
+        '\x1b[91m', ('[' + followers + 'f-' + ((1 / probability) * 100).toFixed(0) + '%]').padStart(15),                                                                                    // Followers + Probability
+        '\x1b[0m', textLog.padEnd(120),                                                                                                                                                     // Title
+        ('http://' + (tweet.entities && tweet.entities.urls && tweet.entities.urls[0] && tweet.entities.urls[0].url) || textLog.split(/http/)[textLog.split(/http/).length-1]).padEnd(40)   // URL
       );
 
       if (!pickRand(probability)) {
