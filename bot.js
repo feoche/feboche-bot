@@ -101,12 +101,6 @@ function streamCallback (stream) {
               if (error) {
                 console.error('Error: ', error)
               } else {
-                socket.emit('new', {
-                  severity: 1,
-                  text: tweet.text.replace('\n', '').trim().replace(/(\r\n\t|\n|\r\t)/gm, '').replace(/\shttp.*/g, ''),
-                  url: (tweet.entities && tweet.entities.urls && tweet.entities.urls[0] && tweet.entities.urls[0].url) || 'http://' + tweet.text.split(/http/)[tweet.text.split(/http/).length - 1] || ''
-                })
-                sent = true
                 // Reset number of tweets
                 if (userTweets[userName]) {
                   userTweets[userName].postedTweets = 0
@@ -117,12 +111,18 @@ function streamCallback (stream) {
           )
         }
       }
+      socket.emit('new', {
+        severity: 1,
+        text: tweet.text.replace('\n', '').trim().replace(/(\r\n\t|\n|\r\t)/gm, '').replace(/\shttp.*/g, ''),
+        url: (tweet.entities && tweet.entities.urls && tweet.entities.urls[0] && tweet.entities.urls[0].url) || ''
+      })
+      sent = true
     }
     if (!sent) {
       socket.emit('new', {
         severity: 0,
         text: tweet.text.replace('\n', '').trim().replace(/(\r\n\t|\n|\r\t)/gm, '').replace(/\shttp.*/g, ''),
-        url: (tweet.entities && tweet.entities.urls && tweet.entities.urls[0] && tweet.entities.urls[0].url) || 'http://' + tweet.text.split(/http/)[tweet.text.split(/http/).length - 1] || ''
+        url: (tweet.entities && tweet.entities.urls && tweet.entities.urls[0] && tweet.entities.urls[0].url) || ''
       })
     }
   })
