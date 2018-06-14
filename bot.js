@@ -1,7 +1,8 @@
 import Twitter from 'twitter'
 import minimist from 'minimist'
-import http from 'http'
 import LanguageDetect from 'languagedetect'
+import http from 'http'
+import express from 'express'
 import io from 'socket.io'
 import {data} from './data.js'
 
@@ -20,8 +21,8 @@ let twitterAPI = new Twitter({
   access_token_key: process.env.ACCESS_TOKEN_KEY || args.access_token_key,
   access_token_secret: process.env.ACCESS_TOKEN_SECRET || args.access_token_secret
 })
-let port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
-let ipadr = process.env.OPENSHIFT_NODEJS_IP || `127.0.0.1`;
+let port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080
+let ipadr = process.env.IP || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0'
 
 console.log(`Logged in`)
 initStreaming()
@@ -44,13 +45,13 @@ function pickRand (data) {
 function streamCallback (stream) {
   console.log(`streaming`)
 
-  let socket = io.listen(http.createServer((request, response) => {
-    response.writeHead(200, {'Content-Type': 'text/plain'})
-    response.end()
-  }).listen(port, ipadr))
-  console.log(port+":"+ipadr)
+  let server = http.createServer(express())
+  let socket = io.listen(server)
 
   socket.on('connection', () => console.log('Launchpad connected'))
+
+  server.listen(port, ipadr)
+  console.log(port + ':' + ipadr)
 
   stream.on(`data`, tweet => {
     let sent = false
@@ -77,7 +78,7 @@ function streamCallback (stream) {
         '\x1b[94m', ('[@' + userName + ']').padStart(20),                                                                                                                                         // User
         '\x1b[91m', ('[' + followers + 'f-' + ((1 / probability) * 100).toFixed(0) + '%]').padStart(15),                                                                                          // Followers + Probability
         '\x1b[0m', textLog.padEnd(125),                                                                                                                                                           // Title
-        ('http://' + (tweet.entities && tweet.entities.urls && tweet.entities.urls[0] && tweet.entities.urls[0].url) || text.split(/http/)[text.split(/http/).length-1] || '').padEnd(40)   // URL
+        ('http://' + (tweet.entities && tweet.entities.urls && tweet.entities.urls[0] && tweet.entities.urls[0].url) || text.split(/http/)[text.split(/http/).length - 1] || '').padEnd(40)   // URL
       );
 
       if (!pickRand(probability)) {
@@ -117,7 +118,7 @@ function streamCallback (stream) {
         sent = true
       }
     }
-    if(!sent) {
+    if (!sent) {
       socket.emit('new', {
         severity: 0,
         text: tweet.text,
@@ -150,7 +151,7 @@ function initStreaming () {
 function isAllowedTweet (tweet) {
   return tweet.text &&                                                                                                                             // Tweet contains text
     tweet.lang === `fr` &&                                                                                                                         // Tweet is in french
-    lngDetector.detect(tweet.text) && lngDetector.detect(tweet.text)[0] && lngDetector.detect(tweet.text)[0][0] === "french" &&                    // Tweet is in french for sure
+    lngDetector.detect(tweet.text) && lngDetector.detect(tweet.text)[0] && lngDetector.detect(tweet.text)[0][0] === 'french' &&                    // Tweet is in french for sure
     containsRegExp(tweet.text, data.PROHIBITEDWORDS[0].queries) &&                                                                                 // Tweet contains `prohibited` words
     !containsRegExp(tweet.text, data.EXCEPTIONS) &&                                                                                                // Tweet doesn`t contain any of the excluded terms
     !containsRegExp(tweet.text, [/RT\s\@/]) &&                                                                                                     // Tweet is not a Retweet
