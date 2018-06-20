@@ -89,7 +89,7 @@ function streamCallback (stream) {
         }
 
         // Log
-        let tweetDone = `@${userName} ${result} \n${data.EMOJIS[pickRand(data.EMOJIS.length)]} ${data.LINKS[pickRand(data.LINKS.length)]} ${data.EMOJIS[pickRand(data.EMOJIS.length)]}`
+        let tweetDone = `@${userName} ${result} \n${data.LINKS[pickRand(data.LINKS.length)]}`
         console.log(`—> `, tweetDone.trim().replace(/(\r\n\t|\n|\r\t)/gm, ''))
 
         if (!args.test) { // TWEET
