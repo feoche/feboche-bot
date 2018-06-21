@@ -1,7 +1,7 @@
 {
-  "name": "digital-twitter-bot",
+  "name": "feoche-bot",
   "version": "1.0.0",
-  "description": "Twitter bot that listens for the word \"digital\" & replies to it w/ a specific answer.",
+  "description": "Twitter bot w/ Markov chains.",
   "main": "bot.js",
   "scripts": {
     "start": "node -r @std/esm bot.js",
@@ -17,11 +17,8 @@
   },
   "dependencies": {
     "@std/esm": "^0.12.4",
-    "express": "^4.16.3",
-    "http": "0.0.0",
-    "languagedetect": "^1.1.1",
+    "markovchain": "^1.0.2",
     "minimist": "^1.2.0",
-    "socket.io": "^2.1.1",
     "twitter": "^1.7.1"
   },
   "devDependencies": {
@@ -33,20 +30,5 @@
     "eslint-plugin-promise": "^3.6.0",
     "eslint-plugin-standard": "^3.0.1",
     "prettier": "^1.7.4"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/feoche/digital-twitter-bot.git"
-  },
-  "keywords": [
-    "digital",
-    "twitter",
-    "bot"
-  ],
-  "author": "François Eoche",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/feoche/digital-twitter-bot/issues"
-  },
-  "homepage": "https://github.com/feoche/digital-twitter-bot#readme"
+  }
 }
