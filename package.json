@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@std/esm": "^0.12.4",
+    "fs": "0.0.1-security",
     "markovchain": "^1.0.2",
     "minimist": "^1.2.0",
     "twitter": "^1.7.1"
