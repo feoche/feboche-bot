@@ -1450,7 +1450,7 @@ export default [
   "haha",
   "Allez, prêt à se défoncer les doigts 👌",
   "8 ans et c'est toujours aussi bien <3",
-  "Et le week-end ? On peut le recommencer j'étais pas prêt 😂😂😂  Non.",
+  "Et le week-end ? On peut le recommencer j'étais pas prêt 😂😂😂 Non.",
   "Rappel du bonhomme :",
   "Mon dieu, ça lui va tellement bien 😂😂😂",
   "Stylé ça !!!",
