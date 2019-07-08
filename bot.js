@@ -78,21 +78,8 @@ const initStreaming = () => {
   );
 };
 
-const streamCallback = stream => {
-  console.log(`streaming`);
-
-  stream.on(`data`, () => {
-    generateMarkov();
-  });
-  // if something happens, call the onStreamError function
-  stream.on(`end`, onStreamError);
-  stream.on(`error`, onStreamError);
-
-  // Start tweeting !
+const streamCallback = () => {
   generateMarkov();
-  setInterval(() => {
-    generateMarkov();
-  }, 1000 * 60 * 60 * 3);
 };
 
 populateData();
