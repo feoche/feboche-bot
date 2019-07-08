@@ -64,23 +64,5 @@ const populateData = () => {
   fs.writeFile("data.js", "export default " + JSON.stringify(tweets, 2, 2), err => err && console.error(err));
 };
 
-const onStreamError = err => {
-  console.error(`Error (${JSON.stringify(err)}) - Reloading...`);
-  setTimeout(initStreaming, 10000);
-};
-
-const initStreaming = () => {
-  // initialize the stream and everything else
-  twitterAPI.stream(
-    `statuses/filter`,
-    { follow: `205674150` },
-    streamCallback
-  );
-};
-
-const streamCallback = () => {
-  generateMarkov();
-};
-
 populateData();
-initStreaming();
+generateMarkov();
